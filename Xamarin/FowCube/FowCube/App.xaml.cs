@@ -4,7 +4,6 @@
     using Xamarin.Forms;
     using FowCube.Services;
     using FowCube.Views;
-    using System.Threading.Tasks;
 
     public partial class App : Application
     {
@@ -25,12 +24,6 @@
         protected override void OnStart()
         {
             // Handle when your app starts.
-            /*var adapter = new RestAdapter("http://jordanthoms.apiary.io/");
-            var service = adapter.Create<ICardService>();
-            var helloResponse = service.HelloWorld();
-            _ = helloResponse.Data;*/
-            var store = new CardStore();
-            var res = Task.Run(() => store.HelloWorld());
         }
 
         protected override void OnSleep()

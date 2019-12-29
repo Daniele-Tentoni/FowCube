@@ -1,7 +1,10 @@
-﻿using Newtonsoft.Json;
-
-namespace FowCube.Models
+﻿namespace FowCube.Models
 {
+    using Newtonsoft.Json;
+
+    /// <summary>
+    /// A simple card.
+    /// </summary>
     public class Card
     {
         /// <summary>

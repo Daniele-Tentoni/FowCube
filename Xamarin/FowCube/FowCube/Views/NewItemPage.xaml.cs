@@ -19,8 +19,8 @@
 
             this.Item = new Card
             {
-                Name = "Item name",
-                Description = "This is an item description."
+                Name = "Card name",
+                Description = "This is a card description."
             };
 
             this.BindingContext = this;
@@ -32,9 +32,6 @@
             await this.Navigation.PopModalAsync();
         }
 
-        async void Cancel_Clicked(object sender, EventArgs e)
-        {
-            await this.Navigation.PopModalAsync();
-        }
+        async void Cancel_Clicked(object sender, EventArgs e) => _ = await this.Navigation.PopModalAsync();
     }
 }
