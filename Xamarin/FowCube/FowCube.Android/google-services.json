@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "738002101933",
+    "firebase_url": "https://fowcube.firebaseio.com",
+    "project_id": "fowcube",
+    "storage_bucket": "fowcube.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:738002101933:android:2dadaefb33331f5f530824",
+        "android_client_info": {
+          "package_name": "it.danieletentoni.fowcube"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "738002101933-6fk99vgvvrsth8fsret73bq9o5tfj0k7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCXHD3XHAfusnLnpJDwAI6MpBw1PcB6OCA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "738002101933-6fk99vgvvrsth8fsret73bq9o5tfj0k7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
