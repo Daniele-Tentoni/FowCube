@@ -35,6 +35,10 @@
             this.Items = new List<Card>();
         }
 
+        /// <summary>
+        /// Say Hello World to the user.
+        /// </summary>
+        /// <returns>Nothing other than the welcome.</returns>
         public async Task HelloWorld()
         {
             if (this.IsConnected)

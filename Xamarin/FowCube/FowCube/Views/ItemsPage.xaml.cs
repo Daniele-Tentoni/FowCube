@@ -32,10 +32,7 @@
             this.CardsListView.SelectedItem = null;
         }
 
-        async void AddItem_Clicked(object sender, EventArgs e)
-        {
-            await this.Navigation.PushModalAsync(new NavigationPage(new NewItemPage()));
-        }
+        async void AddItem_Clicked(object sender, EventArgs e) => await this.Navigation.PushModalAsync(new NavigationPage(new NewItemPage()));
 
         protected override void OnAppearing()
         {

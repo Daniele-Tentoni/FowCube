@@ -36,7 +36,11 @@ app.post('/api/card', (req, res) => {
 				});
 			let n_index = l_index + 1;
 			await db.collection('cards').doc('/' + n_index + '/')
-				.create({card_id: n_index, name: req.body.name, description: req.body.description});
+				.create({
+					card_id: n_index,
+					description: req.body.description,
+					name: req.body.name
+				});
 			return res.status(200).send();
         } catch (error) {
 			console.log(error);
@@ -57,8 +61,8 @@ app.get('/api/card/:id', (req, res) => {
             console.log(error);
             return res.status(500).send(error);
         }
-        })();
-    });
+	})();
+});
 
 // Read all cards.
 app.get('/api/card', (req, res) => {
@@ -72,8 +76,8 @@ app.get('/api/card', (req, res) => {
                 const selectedItem = {
                     id: doc.id,
 					card_id: doc.data().card_id,
-                    name: doc.data().name,
-					description: doc.data().description
+					description: doc.data().description,
+                    name: doc.data().name
                 };
                 response.push(selectedItem);
             }

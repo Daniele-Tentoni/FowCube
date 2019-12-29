@@ -25,30 +25,18 @@
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <ViewCell>
-                        <Grid x:Name="Card">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="20%" />
-                            </Grid.ColumnDefinitions>
-                            <StackLayout Padding="10" Grid.Column="1"
-                                         HorizontalOptions="StartAndExpand">
-                                <Label Text="{Binding Name}" 
+                        <StackLayout Padding="10" Grid.Column="1">
+                            <Label Text="{Binding Name}" 
                                 d:Text="{Binding .}"
                                 LineBreakMode="TailTruncation" 
                                 Style="{DynamicResource ListItemTextStyle}" 
                                 FontSize="Medium" />
-                                <Label Text="{Binding Description}" 
+                            <Label Text="{Binding Description}" 
                                 d:Text="Item descripton"
-                                LineBreakMode="NoWrap"
+                                LineBreakMode="TailTruncation"
                                 Style="{DynamicResource ListItemDetailTextStyle}"
                                 FontSize="Small" />
-                            </StackLayout>
-                            <Button Grid.Column="2"
-                                    BindingContext="{Binding Source={x:Reference CardsListView}, Path=BindingContext}" 
-                                    Command="{Binding DeleteItemCommand}" CommandParameter="{Binding Source={x:Reference Card}, Path=BindingContext}" 
-                                    Text="Delete">
-                            </Button>
-                        </Grid>
+                        </StackLayout>
                     </ViewCell>
                 </DataTemplate>
             </ListView.ItemTemplate>

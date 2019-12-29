@@ -5,8 +5,18 @@
 
     public interface IDataStore<T>
     {
+        /// <summary>
+        /// Add the new <paramref name="item"/> of type <typeparamref name="T"/> to the DataStore.
+        /// </summary>
+        /// <param name="item">Item to add to the DataStore.</param>
+        /// <returns>True if the item was added correctly.</returns>
         Task<bool> AddItemAsync(T item);
         Task<bool> UpdateItemAsync(T item);
+        /// <summary>
+        /// Delete the <paramref name="id"/> item.
+        /// </summary>
+        /// <param name="id">Id of the selected element.</param>
+        /// <returns>True if the element was deleted.</returns>
         Task<bool> DeleteItemAsync(string id);
         Task<T> GetItemAsync(string id);
         Task<IEnumerable<T>> GetItemsAsync(bool forceRefresh = false);
