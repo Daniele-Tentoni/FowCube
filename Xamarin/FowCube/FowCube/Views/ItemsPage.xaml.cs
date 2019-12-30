@@ -39,7 +39,7 @@
             base.OnAppearing();
 
             if (this.viewModel.Cards.Count == 0)
-                this.viewModel.LoadItemsCommand.Execute(null);
+                this.viewModel.LoadCardsCommand.Execute(null);
         }
     }
 }

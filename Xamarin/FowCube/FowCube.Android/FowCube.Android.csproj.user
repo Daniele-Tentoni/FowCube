@@ -3,5 +3,6 @@
   <PropertyGroup>
     <SelectedDevice>realme RMX1971</SelectedDevice>
     <DefaultDevice>basic_device</DefaultDevice>
+    <AndroidDesignerPreferredTheme>Theme.DeviceDefault.Light.NoActionBar.Fullscreen</AndroidDesignerPreferredTheme>
   </PropertyGroup>
 </Project>
