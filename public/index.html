@@ -61,6 +61,8 @@
 
             <main class="mdl-layout__content mdl-color--grey-100">
                 <div id="messages-card-container" class="mdl-cell mdl-cell--12-col mdl-grid">
+                    <!--
+                        Default by Firebase.
                     <div id="message">
                         <h2>Welcome</h2>
                         <h1>Firebase Hosting Setup Complete</h1>
@@ -68,6 +70,7 @@
                         <a target="_blank" href="https://firebase.google.com/docs/hosting/">Open Hosting Documentation</a>
                     </div>
                     <p id="load">Firebase SDK Loading&hellip;</p>
+                    -->
 
                     <!-- Messages container -->
                     <div id="messages-card" class="mdl-card mdl-shadow--2dp mdl-cell mdl-cell--12-col mdl-cell--6-col-tablet mdl-cell--6-col-desktop">
@@ -80,14 +83,14 @@
                                     <label class="mdl-textfield__label" for="message">Message...</label>
                                 </div>
                                 <button id="submit" disabled type="submit" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect">
-					  Send
-					</button>
+					                Send
+					            </button>
                             </form>
                             <form id="image-form" action="#">
                                 <input id="mediaCapture" type="file" accept="image/*" capture="camera">
                                 <button id="submitImage" title="Add an image" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-color--amber-400 mdl-color-text--white">
-					  <i class="material-icons">image</i>
-					</button>
+					                <i class="material-icons">image</i>
+					            </button>
                             </form>
                         </div>
                     </div>
