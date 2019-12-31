@@ -95,7 +95,10 @@ function saveMessagingDeviceToken() {
             console.log('Got FCM device token:', currentToken);
             // Saving the Device Token to the datastore.
             firebase.firestore().collection('fcmTokens').doc(currentToken)
-                .set({ uid: firebase.auth().currentUser.uid });
+                .set({
+                    uid: firebase.auth().currentUser.uid,
+                    user: firebase.auth().currentUser.displayName
+                });
         } else {
             // Need to request permissions to show notifications.
             requestNotificationsPermissions();
