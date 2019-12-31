@@ -164,3 +164,17 @@ app.put('/api/collection/addcard/:item_id', (req, res) => {});
 app.delete('/api/collection/:item_id', (req, res) => {});
 
 exports.app = functions.https.onRequest(app);
+
+// Adds a message that welcomes new users into the chat.
+exports.addWelcomeMessages = functions.auth.user().onCreate(async(user) => {
+    console.log('A new user signed in for the first time.');
+    const fullName = user.displayName || 'Anonymous';
+
+    // Saves the new welcome message into the database
+    // which then displays it in the FriendlyChat clients.
+    await admin.firestore().collection('cards').add({
+        name: 'Firebase Bot',
+        description: `${fullName} signed in for the first time! Welcome!`
+    });
+    console.log('Welcome message written to database.');
+});
