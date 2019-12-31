@@ -51,18 +51,35 @@ function isUserSignedIn() {
 
 // Saves a new message to your Cloud Firestore database.
 function saveCard(cardName) {
+    console.log("Saving " + cardName);
     // Add a new message entry to the database.
     return firebase.firestore().collection('cards').add({
         name: cardName,
-        description: "This is a automatic description."
+        description: "This is a automatic description from the web."
     }).catch(function(error) {
         console.error('Error writing new message to database', error);
     });
 }
 
-// Loads chat messages history and listens for upcoming ones.
-function loadMessages() {
-    // TODO 8: Load and listens for new messages.
+// Loads cards and listens for upcoming ones.
+function loadCards() {
+    // Create the query to load the last 12 cards and listen for new ones.
+    var query = firebase.firestore()
+        .collection("cards")
+        .orderBy("name", "asc")
+        .limit(12);
+
+    // Start listening to the query.
+    query.onSnapshot(function(snapshot) {
+        snapshot.docChanges().forEach(function(change) {
+            if (change.type === 'removed') {
+                deleteCard(change.doc.id);
+            } else {
+                var card = change.doc.data();
+                displayCard(change.doc.id, card.name, card.description, card.imageUrl);
+            }
+        });
+    });
 }
 
 // Saves a new message containing an image in Firebase.
@@ -105,13 +122,13 @@ function onMediaFileSelected(event) {
 }
 
 // Triggered when the send new message form is submitted.
-function onMessageFormSubmit(e) {
+function onCardFormSubmit(e) {
     e.preventDefault();
     // Check that the user entered a message and is signed in.
-    if (messageInputElement.value && checkSignedInWithMessage()) {
-        saveCard(messageInputElement.value).then(function() {
+    if (cardInputElement.value && checkSignedInWithMessage()) {
+        saveCard(cardInputElement.value).then(function() {
             // Clear message text field and re-enable the SEND button.
-            resetMaterialTextfield(messageInputElement);
+            resetMaterialTextfield(cardInputElement);
             toggleButton();
         });
     }
@@ -171,11 +188,11 @@ function resetMaterialTextfield(element) {
     element.parentNode.MaterialTextfield.boundUpdateClassesHandler();
 }
 
-// Template for messages.
-var MESSAGE_TEMPLATE =
-    '<div class="message-container">' +
+// Template for cards.
+var CARD_TEMPLATE =
+    '<div class="card-container">' +
     '<div class="spacing"><div class="pic"></div></div>' +
-    '<div class="message"></div>' +
+    '<div class="description"></div>' +
     '<div class="name"></div>' +
     '</div>';
 
@@ -191,7 +208,7 @@ function addSizeToGoogleProfilePic(url) {
 var LOADING_IMAGE_URL = 'https://www.google.com/images/spin-32.gif?a';
 
 // Delete a Message from the UI.
-function deleteMessage(id) {
+function deleteCard(id) {
     var div = document.getElementById(id);
     // If an element for that message exists we delete it.
     if (div) {
@@ -199,81 +216,84 @@ function deleteMessage(id) {
     }
 }
 
-function createAndInsertMessage(id, timestamp) {
+function createAndInsertCard(id, name) {
+    debugger;
     const container = document.createElement('div');
-    container.innerHTML = MESSAGE_TEMPLATE;
+    container.innerHTML = CARD_TEMPLATE;
     const div = container.firstChild;
     div.setAttribute('id', id);
 
-    // If timestamp is null, assume we've gotten a brand new message.
+    // If name is null, assume we've gotten a brand new message.
     // https://stackoverflow.com/a/47781432/4816918
-    timestamp = timestamp ? timestamp.toMillis() : Date.now();
-    div.setAttribute('timestamp', timestamp);
+    name = name ? name : "New card.";
+    div.setAttribute('name', name);
 
     // figure out where to insert new message
-    const existingMessages = messageListElement.children;
-    if (existingMessages.length === 0) {
-        messageListElement.appendChild(div);
+    const existingCards = cardListElement.children;
+    if (existingCards.length === 0) {
+        cardListElement.appendChild(div);
     } else {
-        let messageListNode = existingMessages[0];
+        let cardListNode = existingCards[0];
 
-        while (messageListNode) {
-            const messageListNodeTime = messageListNode.getAttribute('timestamp');
+        while (cardListNode) {
+            const cardListNodeName = cardListNode.getAttribute('name');
 
-            if (!messageListNodeTime) {
+            if (!cardListNodeName) {
                 throw new Error(
-                    `Child ${messageListNode.id} has no 'timestamp' attribute`
+                    `Child ${cardListNode.id} has no 'name' attribute`
                 );
             }
 
-            if (messageListNodeTime > timestamp) {
+            if (cardListNodeName > name) {
                 break;
             }
 
-            messageListNode = messageListNode.nextSibling;
+            cardListNode = cardListNode.nextSibling;
         }
 
-        messageListElement.insertBefore(div, messageListNode);
+        cardListElement.insertBefore(div, cardListNode);
     }
 
     return div;
 }
 
-// Displays a Message in the UI.
-function displayMessage(id, timestamp, name, text, picUrl, imageUrl) {
-    var div = document.getElementById(id) || createAndInsertMessage(id, timestamp);
+// Displays a Message in the UI. Missing picUrl.
+function displayCard(id, name, description, imageUrl) {
+    debugger;
+    var div = document.getElementById(id) || createAndInsertCard(id, name);
 
-    // profile picture
-    if (picUrl) {
-        div.querySelector('.pic').style.backgroundImage = 'url(' + addSizeToGoogleProfilePic(picUrl) + ')';
-    }
+    // Profile picture. Disabled before card image.
+    // if (picUrl) {
+    //     div.querySelector('.pic').style.backgroundImage = 'url(' + addSizeToGoogleProfilePic(picUrl) + ')';
+    // }
 
     div.querySelector('.name').textContent = name;
-    var messageElement = div.querySelector('.message');
+    var cardElement = div.querySelector('.description');
 
-    if (text) { // If the message is text.
-        messageElement.textContent = text;
+    if (description) { // If the card have description.
+        cardElement.textContent = description;
         // Replace all line breaks by <br>.
-        messageElement.innerHTML = messageElement.innerHTML.replace(/\n/g, '<br>');
-    } else if (imageUrl) { // If the message is an image.
+        cardElement.innerHTML = cardElement.innerHTML.replace(/\n/g, '<br>');
+    } else if (imageUrl) { // If the card is an image.
         var image = document.createElement('img');
         image.addEventListener('load', function() {
-            messageListElement.scrollTop = messageListElement.scrollHeight;
+            cardListElement.scrollTop = cardListElement.scrollHeight;
         });
         image.src = imageUrl + '&' + new Date().getTime();
-        messageElement.innerHTML = '';
-        messageElement.appendChild(image);
+        cardElement.innerHTML = '';
+        cardElement.appendChild(image);
     }
-    // Show the card fading-in and scroll to view the new message.
+
+    // Show the card fading-in and scroll to view the new card.
     setTimeout(function() { div.classList.add('visible') }, 1);
-    messageListElement.scrollTop = messageListElement.scrollHeight;
-    messageInputElement.focus();
+    cardListElement.scrollTop = cardListElement.scrollHeight;
+    cardInputElement.focus();
 }
 
 // Enables or disables the submit button depending on the values of the input
 // fields.
 function toggleButton() {
-    if (messageInputElement.value) {
+    if (cardInputElement.value) {
         submitButtonElement.removeAttribute('disabled');
     } else {
         submitButtonElement.setAttribute('disabled', 'true');
@@ -293,9 +313,9 @@ function checkSetup() {
 checkSetup();
 
 // Shortcuts to DOM Elements.
-var messageListElement = document.getElementById('messages');
-var messageFormElement = document.getElementById('message-form');
-var messageInputElement = document.getElementById('message');
+var cardListElement = document.getElementById('cards');
+var cardFormElement = document.getElementById('card-form');
+var cardInputElement = document.getElementById('card');
 var submitButtonElement = document.getElementById('submit');
 var imageButtonElement = document.getElementById('submitImage');
 var imageFormElement = document.getElementById('image-form');
@@ -306,14 +326,14 @@ var signInButtonElement = document.getElementById('sign-in');
 var signOutButtonElement = document.getElementById('sign-out');
 var signInSnackbarElement = document.getElementById('must-signin-snackbar');
 
-// Saves message on form submit.
-// messageFormElement.addEventListener('submit', onMessageFormSubmit);
+// Saves card on form submit.
+cardFormElement.addEventListener('submit', onCardFormSubmit);
 signOutButtonElement.addEventListener('click', signOut);
 signInButtonElement.addEventListener('click', signIn);
 
 // Toggle for the button.
-messageInputElement.addEventListener('keyup', toggleButton);
-messageInputElement.addEventListener('change', toggleButton);
+cardInputElement.addEventListener('keyup', toggleButton);
+cardInputElement.addEventListener('change', toggleButton);
 
 // Events for image upload.
 // imageButtonElement.addEventListener('click', function(e) {
@@ -329,5 +349,5 @@ var firestore = firebase.firestore();
 
 // TODO: Enable Firebase Performance Monitoring.
 
-// We load currently existing chat messages and listen to new ones.
-loadMessages();
+// We load currently existing chat cards and listen to new ones.
+loadCards();

@@ -7,8 +7,8 @@ const app = express();
 var serviceAccount = require("./permissions.json");
 
 admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-  databaseURL: "https://fowcube.firebaseio.com"
+    credential: admin.credential.cert(serviceAccount),
+    databaseURL: "https://fowcube.firebaseio.com"
 });
 
 const db = admin.firestore();
@@ -17,41 +17,42 @@ app.use(cors({ origin: true }));
 
 // Hello World. Used for test.
 app.get('/hello-world', (req, res) => {
-  return res.status(200).send('Hello World!');
+    return res.status(200).send('Hello World!');
 });
 
 // Create a card.
 app.post('/api/card', (req, res) => {
-    (async () => {
+    (async() => {
         try {
-			let l_index = 0;
-			await db.collection('cards')
-				.orderBy('card_id', 'desc')
-				.limit(1).get().then(snapshot => {
-					let docs = snapshot.docs;
-					for (let doc of docs) {
-						l_index = doc.data().card_id;
-					}
-					return;
-				});
-			let n_index = l_index + 1;
-			await db.collection('cards').doc('/' + n_index + '/')
-				.create({
-					card_id: n_index,
-					description: req.body.description,
-					name: req.body.name
-				});
-			return res.status(200).send();
+            let l_index = 0; // Search the last index.
+            await db.collection('cards')
+                .orderBy('card_id', 'desc')
+                .limit(1).get().then(snapshot => {
+                    let docs = snapshot.docs;
+                    for (let doc of docs) {
+                        l_index = doc.data().card_id;
+                    }
+                    return;
+                });
+            console.log(req.body.id !== null ? "In this case I have to assign an id." : "Not assigned id.");
+            let n_index = req.body.id !== null ? req.body.id : l_index + 1;
+            await db.collection('cards').doc('/' + n_index + '/')
+                .create({
+                    card_id: n_index,
+                    description: req.body.description,
+                    name: req.body.name
+                });
+            return res.status(200).send();
         } catch (error) {
-			console.log(error);
-			return res.status(500).send(error);
-		}
-	})();
+            console.log(error);
+            return res.status(500).send(error);
+        }
+    })();
 });
-  
+
 // Read a card.
 app.get('/api/card/:id', (req, res) => {
-    (async () => {
+    (async() => {
         try {
             const document = db.collection('cards').doc(req.params.id);
             let item = await document.get();
@@ -61,73 +62,105 @@ app.get('/api/card/:id', (req, res) => {
             console.log(error);
             return res.status(500).send(error);
         }
-	})();
+    })();
 });
 
 // Read all cards.
 app.get('/api/card', (req, res) => {
-    (async () => {
+    (async() => {
         try {
             let query = db.collection('cards');
             let response = [];
             await query.get().then(querySnapshot => {
-            let docs = querySnapshot.docs;
-            for (let doc of docs) {
-                const selectedItem = {
-                    id: doc.id,
-					card_id: doc.data().card_id,
-					description: doc.data().description,
-                    name: doc.data().name
-                };
-                response.push(selectedItem);
-            }
-			return;
+                let docs = querySnapshot.docs;
+                for (let doc of docs) {
+                    const selectedItem = {
+                        id: doc.id,
+                        card_id: doc.data().card_id,
+                        description: doc.data().description,
+                        name: doc.data().name
+                    };
+                    response.push(selectedItem);
+                }
+                return;
             });
             return res.status(200).send(response);
         } catch (error) {
             console.log(error);
             return res.status(500).send(error);
         }
-        })();
-    });
+    })();
+});
 
 // Update a card.
 app.put('/api/card/:item_id', (req, res) => {
-(async () => {
-    try {
-        const document = db.collection('cards').doc(req.params.item_id);
-        await document.update({
-            name: req.body.name,
-			description: req.body.description
-        });
-        return res.status(200).send();
-    } catch (error) {
-        console.log(error);
-        return res.status(500).send(error);
-    }
+    (async() => {
+        try {
+            const document = db.collection('cards').doc(req.params.item_id);
+            await document.update({
+                name: req.body.name,
+                description: req.body.description
+            });
+            return res.status(200).send();
+        } catch (error) {
+            console.log(error);
+            return res.status(500).send(error);
+        }
     })();
 });
 
 // Delete a card.
 app.delete('/api/card/:item_id', (req, res) => {
-(async () => {
-    try {
-        const document = db.collection('cards').doc(req.params.item_id);
-        await document.delete();
-        return res.status(200).send();
-    } catch (error) {
-        console.log(error);
-        return res.status(500).send(error);
-    }
+    (async() => {
+        try {
+            const document = db.collection('cards').doc(req.params.item_id);
+            await document.delete();
+            return res.status(200).send();
+        } catch (error) {
+            console.log(error);
+            return res.status(500).send(error);
+        }
     })();
 });
 
 // GONG Tutorial.
 app.get('/api', (req, res) => {
-  const date = new Date();
-  const hours = (date.getHours() % 12) + 1;  // London is UTC + 1hr;
-  res.json({bongs: 'BONG '.repeat(hours)});
+    const date = new Date();
+    const hours = (date.getHours() % 12) + 1; // London is UTC + 1hr;
+    res.json({ bongs: 'BONG '.repeat(hours) });
 });
 
-exports.app = functions.https.onRequest(app);
+// Create a collection.
+app.post('/api/collection', (req, res) => {
+    (async() => {
+        try {
+            await db.collection('collections').push({
+                name: req.body.name
+            });
+            return res.status(200).send();
+        } catch (error) {
+            console.log(error);
+            return res.status(500).send(error);
+        }
+    })();
+});
 
+// Read all the collection of the user.
+app.get('/api/collection', (req, res) => {});
+
+// Read only the selected collection.
+app.get('/api/collection/:item_id', (req, res) => {});
+
+// Update a collection.
+app.put('/api/collection/:item_id', (req, res) => {});
+
+// Remove a card from a collection.
+app.put('/api/collection/removecard/:item_id', (req, res) => {});
+
+// Add a card in a collection.
+app.put('/api/collection/addcard/:item_id', (req, res) => {});
+
+// Delete a collection.
+app.delete('/api/collection/:item_id', (req, res) => {});
+
+exports.app = functions.https.onRequest(app);
