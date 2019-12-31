@@ -21,7 +21,7 @@ app.get('/hello-world', (req, res) => {
 });
 
 // Create a card.
-app.post('/api/card', (req, res) => {
+cards.post('/api/card', (req, res) => {
     (async() => {
         try {
             let l_index = 0; // Search the last index.
@@ -51,7 +51,7 @@ app.post('/api/card', (req, res) => {
 });
 
 // Read a card.
-app.get('/api/card/:id', (req, res) => {
+cards.get('/api/card/:id', (req, res) => {
     (async() => {
         try {
             const document = db.collection('cards').doc(req.params.id);
@@ -66,7 +66,7 @@ app.get('/api/card/:id', (req, res) => {
 });
 
 // Read all cards.
-app.get('/api/card', (req, res) => {
+cards.get('/api/card', (req, res) => {
     (async() => {
         try {
             let query = db.collection('cards');
@@ -93,7 +93,7 @@ app.get('/api/card', (req, res) => {
 });
 
 // Update a card.
-app.put('/api/card/:item_id', (req, res) => {
+cards.put('/api/card/:item_id', (req, res) => {
     (async() => {
         try {
             const document = db.collection('cards').doc(req.params.item_id);
@@ -110,7 +110,7 @@ app.put('/api/card/:item_id', (req, res) => {
 });
 
 // Delete a card.
-app.delete('/api/card/:item_id', (req, res) => {
+cards.delete('/api/card/:item_id', (req, res) => {
     (async() => {
         try {
             const document = db.collection('cards').doc(req.params.item_id);
@@ -131,7 +131,7 @@ app.get('/api', (req, res) => {
 });
 
 // Create a collection.
-app.post('/api/collection', (req, res) => {
+collections.post('/api/collection', (req, res) => {
     (async() => {
         try {
             await db.collection('collections').push({
@@ -146,24 +146,28 @@ app.post('/api/collection', (req, res) => {
 });
 
 // Read all the collection of the user.
-app.get('/api/collection', (req, res) => {});
+collections.get('/api/collection', (req, res) => {});
 
 // Read only the selected collection.
-app.get('/api/collection/:item_id', (req, res) => {});
+collections.get('/api/collection/:item_id', (req, res) => {});
 
 // Update a collection.
-app.put('/api/collection/:item_id', (req, res) => {});
+collections.put('/api/collection/:item_id', (req, res) => {});
 
 // Remove a card from a collection.
-app.put('/api/collection/removecard/:item_id', (req, res) => {});
+collections.put('/api/collection/removecard/:item_id', (req, res) => {});
 
 // Add a card in a collection.
-app.put('/api/collection/addcard/:item_id', (req, res) => {});
+collections.put('/api/collection/addcard/:item_id', (req, res) => {});
 
 // Delete a collection.
-app.delete('/api/collection/:item_id', (req, res) => {});
+collections.delete('/api/collection/:item_id', (req, res) => {});
 
 exports.app = functions.https.onRequest(app);
+
+exports.cards = functions.https.onRequest(cards);
+
+exports.collections = functions.https.onRequest(collections);
 
 // Adds a message that welcomes new users into the chat.
 exports.addWelcomeMessages = functions.auth.user().onCreate(async(user) => {
