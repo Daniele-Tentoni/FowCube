@@ -367,6 +367,7 @@ initFirebaseAuth();
 var firestore = firebase.firestore();
 
 // TODO: Enable Firebase Performance Monitoring.
+firebase.performance();
 
 // We load currently existing chat cards and listen to new ones.
 loadCards();
