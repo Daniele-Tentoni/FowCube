@@ -3,6 +3,8 @@ const admin = require('firebase-admin');
 const express = require('express');
 const cors = require('cors');
 const app = express();
+const cards = express();
+const collections = express();
 
 var serviceAccount = require("./permissions.json");
 
