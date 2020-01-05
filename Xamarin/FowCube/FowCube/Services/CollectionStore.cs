@@ -9,7 +9,7 @@
     using Newtonsoft.Json;
     using Xamarin.Essentials;
 
-    class CollectionStore : IDataStore<Collection>
+    public class CollectionStore
     {
         bool IsConnected => Connectivity.NetworkAccess == NetworkAccess.Internet;
 
@@ -21,7 +21,7 @@
         {
             this.Client = new HttpClient
             {
-                BaseAddress = new Uri($"https://us-central1-fowcube.cloudfunctions.net/cards/")
+                BaseAddress = new Uri($"{App.AzureBackendUrl}/collection/")
             };
             try
             {
@@ -35,20 +35,36 @@
             this.Items = new List<Collection>();
         }
 
-        public async Task<bool> AddItemAsync(Collection item)
+        private class CreateInfo
         {
-            if (item != null || this.IsConnected)
+            public string Name { get; set; }
+            public string Uid { get; set; }
+        }
+
+        public async Task<bool> CreateAsync(string name, string uid)
+        {
+            if (name != null || uid != null || this.IsConnected)
             {
-                var serializedItem = JsonConvert.SerializeObject(item);
-                var response = await this.Client.PostAsync($"api/card", new StringContent(serializedItem, Encoding.UTF8, "application/json"));
+                var serializedItem = JsonConvert.SerializeObject(new CreateInfo {Name = name, Uid = uid});
+                var response = await this.Client.PostAsync($"api/collection", new StringContent(serializedItem, Encoding.UTF8, "application/json"));
                 return response.IsSuccessStatusCode;
             }
 
             return false;
         }
-
         public Task<bool> DeleteItemAsync(string id) => throw new System.NotImplementedException();
-        public Task<Collection> GetItemAsync(string id) => throw new System.NotImplementedException();
+
+        public async Task<Collection> GetAsync(string id, string uid)
+        {
+            if (id != null && uid != null && this.IsConnected)
+            {
+                var json = await this.Client.GetStringAsync($"api/collection/{id}/{uid}");
+                return await Task.Run(() => JsonConvert.DeserializeObject<Collection>(json));
+            }
+
+            return null;
+        }
+
         public Task<IEnumerable<Collection>> GetItemsAsync(bool forceRefresh = false) => throw new System.NotImplementedException();
         public Task<bool> UpdateItemAsync(Collection item) => throw new System.NotImplementedException();
     }

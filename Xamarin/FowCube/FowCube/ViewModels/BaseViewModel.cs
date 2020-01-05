@@ -9,10 +9,13 @@
 
     using FowCube.Models;
     using FowCube.Services;
+    using FowCube.Authentication;
 
     public class BaseViewModel : INotifyPropertyChanged
     {
-        public IDataStore<Card> DataStore => DependencyService.Get<IDataStore<Card>>() ?? new CardStore();
+        public IAuth authInfo => DependencyService.Get<IAuth>();
+        public IDataStore<Card> CardStore => DependencyService.Get<IDataStore<Card>>() ?? new CardStore();
+        public CollectionStore CollectionsStore => new CollectionStore();
 
         bool isBusy = false;
         public bool IsBusy

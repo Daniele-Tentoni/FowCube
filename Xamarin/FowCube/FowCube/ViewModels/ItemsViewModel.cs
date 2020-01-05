@@ -31,7 +31,7 @@
             {
                 var newItem = item as Card;
                 this.Cards.Add(newItem);
-                var res = await this.DataStore.AddItemAsync(newItem);
+                var res = await this.CardStore.AddItemAsync(newItem);
             });
         }
 
@@ -45,7 +45,17 @@
             try
             {
                 this.Cards.Clear();
-                var items = await this.DataStore.GetItemsAsync(true);
+                var collection = await this.CollectionsStore.GetAsync("1", this.authInfo.GetAuthenticatedUid());
+                if (collection == null)
+                {
+                    var res = await this.CollectionsStore.CreateAsync("1", this.authInfo.GetAuthenticatedUid());
+                    if(res)
+                    {
+                        collection = await this.CollectionsStore.GetAsync("1", this.authInfo.GetAuthenticatedUid());
+                    }
+                }
+
+                var items = await this.CardStore.GetItemsAsync(true);
                 foreach (var item in items)
                 {
                     this.Cards.Add(item);
@@ -100,7 +110,7 @@
 
             try
             {
-                var item = await this.DataStore.DeleteItemAsync(e.Id);
+                var item = await this.CardStore.DeleteItemAsync(e.Id);
                 this.Cards.Remove(e);
             }
             catch (Exception ex)

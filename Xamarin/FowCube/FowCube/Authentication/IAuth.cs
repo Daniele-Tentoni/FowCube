@@ -4,6 +4,7 @@
 
     public interface IAuth
     {
+        string GetAuthenticatedUid();
         Task<string> LoginWithEmailPasswordAsync(string email, string password);
     }
 }

@@ -31,5 +31,7 @@ namespace FowCube.Droid.Implementations
                 return "";
             }
         }
+
+        public string GetAuthenticatedUid() => FirebaseAuth.Instance.CurrentUser.Uid;
     }
 }
