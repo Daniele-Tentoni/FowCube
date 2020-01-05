@@ -3,8 +3,6 @@ const admin = require('firebase-admin');
 const express = require('express');
 const cors = require('cors');
 const app = express();
-const cards = express();
-const collections = express();
 
 var serviceAccount = require("./permissions.json");
 
@@ -23,7 +21,7 @@ app.get('/hello-world', (req, res) => {
 });
 
 // Create a card.
-cards.post('/api/card', (req, res) => {
+app.post('/api/card', (req, res) => {
     (async() => {
         try {
             let l_index = 0; // Search the last index.
@@ -53,7 +51,7 @@ cards.post('/api/card', (req, res) => {
 });
 
 // Read a card.
-cards.get('/api/card/:id', (req, res) => {
+app.get('/api/card/:id', (req, res) => {
     (async() => {
         try {
             const document = db.collection('cards').doc(req.params.id);
@@ -68,7 +66,7 @@ cards.get('/api/card/:id', (req, res) => {
 });
 
 // Read all cards.
-cards.get('/api/card', (req, res) => {
+app.get('/api/card', (req, res) => {
     (async() => {
         try {
             let query = db.collection('cards');
@@ -95,7 +93,7 @@ cards.get('/api/card', (req, res) => {
 });
 
 // Update a card.
-cards.put('/api/card/:item_id', (req, res) => {
+app.put('/api/card/:item_id', (req, res) => {
     (async() => {
         try {
             const document = db.collection('cards').doc(req.params.item_id);
@@ -112,7 +110,7 @@ cards.put('/api/card/:item_id', (req, res) => {
 });
 
 // Delete a card.
-cards.delete('/api/card/:item_id', (req, res) => {
+app.delete('/api/card/:item_id', (req, res) => {
     (async() => {
         try {
             const document = db.collection('cards').doc(req.params.item_id);
@@ -133,11 +131,13 @@ app.get('/api', (req, res) => {
 });
 
 // Create a collection.
-collections.post('/api/collection', (req, res) => {
+app.post('/api/collection', (req, res) => {
     (async() => {
         try {
             await db.collection('collections').push({
-                name: req.body.name
+                name: req.body.name,
+                uid: req.body.uid,
+                cards_in: Array()
             });
             return res.status(200).send();
         } catch (error) {
@@ -148,28 +148,70 @@ collections.post('/api/collection', (req, res) => {
 });
 
 // Read all the collection of the user.
-collections.get('/api/collection', (req, res) => {});
+app.get('/api/collection/:uid', (req, res) => {
+    (async() => {
+        try {
+            let query = db.collection('collections').where("uid", "==", req.params.uid);
+            let response = [];
+            await query.get().then(querySnapshot => {
+                let docs = querySnapshot.docs;
+                for (let doc of docs) {
+                    const selectedItem = {
+                        id: doc.id,
+                        name: doc.data().name
+                    };
+                    response.push(selectedItem);
+                }
+                return;
+            });
+            return res.status(200).send(response);
+        } catch (error) {
+            console.log(error);
+            return res.status(500).send(error);
+        }
+    })();
+});
 
 // Read only the selected collection.
-collections.get('/api/collection/:item_id', (req, res) => {});
+app.get('/api/collection/:name/:uid', (req, res) => {
+    (async() => {
+        try {
+            let query = db.collection("collections")
+                .where("name", "==", req.params.name)
+                .where("uid", "==", req.params.uid).limit(1);
+            await query.get().then(querySnapshot => {
+                let docs = querySnapshot.docs;
+                for (let doc of docs) {
+                    const selectedItem = {
+                        id: doc.id,
+                        cards_in: doc.data().cards_in,
+                        name: doc.data().name
+                    };
+                    return res.status(200).send(selectedItem);
+                }
+                return;
+            });
+            return res.status(200).send(response);
+        } catch (error) {
+            console.log(error);
+            return res.status(500).send(error);
+        }
+    })();
+});
 
 // Update a collection.
-collections.put('/api/collection/:item_id', (req, res) => {});
+app.put('/api/collection/:item_id', (req, res) => {});
 
 // Remove a card from a collection.
-collections.put('/api/collection/removecard/:item_id', (req, res) => {});
+app.put('/api/collection/removecard/:item_id', (req, res) => {});
 
 // Add a card in a collection.
-collections.put('/api/collection/addcard/:item_id', (req, res) => {});
+app.put('/api/collection/addcard/:item_id', (req, res) => {});
 
 // Delete a collection.
-collections.delete('/api/collection/:item_id', (req, res) => {});
+app.delete('/api/collection/:item_id', (req, res) => {});
 
 exports.app = functions.https.onRequest(app);
-
-exports.cards = functions.https.onRequest(cards);
-
-exports.collections = functions.https.onRequest(collections);
 
 // Adds a message that welcomes new users into the chat.
 exports.addWelcomeMessages = functions.auth.user().onCreate(async(user) => {
@@ -186,33 +228,32 @@ exports.addWelcomeMessages = functions.auth.user().onCreate(async(user) => {
 });
 
 // Sends a notifications to all users when a new message is posted.
-exports.sendNotifications = functions.firestore.document('cards/{cardId}').onCreate(
-    async(snapshot) => {
-        // Notification details.
-        const description = snapshot.data().description;
-        const payload = {
-            notification: {
-                title: `${snapshot.data().name} posted a new card.`,
-                body: description ? (description.length <= 100 ? description : description.substring(0, 97) + '...') : '',
-                icon: snapshot.data().profilePicUrl || '/images/profile_placeholder.png' //,
-                    //click_action: `https://${process.env.GCLOUD_PROJECT}.firebaseapp.com`,
-            }
-        };
-
-        // Get the list of device tokens.
-        const allTokens = await admin.firestore().collection('fcmTokens').get();
-        const tokens = [];
-        allTokens.forEach((tokenDoc) => {
-            tokens.push(tokenDoc.id);
-        });
-
-        if (tokens.length > 0) {
-            // Send notifications to all tokens.
-            const response = await admin.messaging().sendToDevice(tokens, payload);
-            await cleanupTokens(response, tokens);
-            console.log('Notifications have been sent and tokens cleaned up.');
+exports.sendNotifications = functions.firestore.document('cards/{cardId}').onCreate(async(snapshot) => {
+    // Notification details.
+    const description = snapshot.data().description;
+    const payload = {
+        notification: {
+            title: `${snapshot.data().name} posted a new card.`,
+            body: description ? (description.length <= 100 ? description : description.substring(0, 97) + '...') : '',
+            icon: snapshot.data().profilePicUrl || '/images/profile_placeholder.png' //,
+                //click_action: `https://${process.env.GCLOUD_PROJECT}.firebaseapp.com`,
         }
+    };
+
+    // Get the list of device tokens.
+    const allTokens = await admin.firestore().collection('fcmTokens').get();
+    const tokens = [];
+    allTokens.forEach((tokenDoc) => {
+        tokens.push(tokenDoc.id);
     });
+
+    if (tokens.length > 0) {
+        // Send notifications to all tokens.
+        const response = await admin.messaging().sendToDevice(tokens, payload);
+        await cleanupTokens(response, tokens);
+        console.log('Notifications have been sent and tokens cleaned up.');
+    }
+});
 
 // Cleans up the tokens that are no longer valid.
 function cleanupTokens(response, tokens) {
