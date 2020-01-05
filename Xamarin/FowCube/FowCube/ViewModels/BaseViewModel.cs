@@ -13,7 +13,7 @@
 
     public class BaseViewModel : INotifyPropertyChanged
     {
-        public IAuth authInfo => DependencyService.Get<IAuth>();
+        public IAuth AuthInfo => DependencyService.Get<IAuth>();
         public IDataStore<Card> CardStore => DependencyService.Get<IDataStore<Card>>() ?? new CardStore();
         public CollectionStore CollectionsStore => new CollectionStore();
 

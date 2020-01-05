@@ -4,12 +4,12 @@
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d"
-             x:Class="FowCube.Views.NewItemPage"
-             Title="New Item">
+             x:Class="FowCube.Views.AddCardToCollectionPage"
+             Title="{Binding Title}">
     
     <ContentPage.ToolbarItems>
         <ToolbarItem Text="Cancel" Clicked="Cancel_Clicked" />
-        <ToolbarItem Text="Save" Clicked="Save_Clicked" />
+        <ToolbarItem Text="Select" Command="{Binding SelectedCommand}" />
     </ContentPage.ToolbarItems>
     
     <ContentPage.Content>

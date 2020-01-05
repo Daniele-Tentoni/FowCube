@@ -21,7 +21,7 @@
         {
             this.Client = new HttpClient
             {
-                BaseAddress = new Uri($"{App.AzureBackendUrl}/cards/")
+                BaseAddress = new Uri($"{App.AzureBackendUrl}/app/")
             };
 
             try
@@ -78,7 +78,7 @@
         {
             if (id != null && this.IsConnected)
             {
-                var json = await this.Client.GetStringAsync($"api/item/{id}");
+                var json = await this.Client.GetStringAsync($"api/card/{id}");
                 return await Task.Run(() => JsonConvert.DeserializeObject<Card>(json));
             }
 

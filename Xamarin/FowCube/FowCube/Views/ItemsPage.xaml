@@ -9,7 +9,7 @@
              x:Name="BrowseItemsPage">
 
     <ContentPage.ToolbarItems>
-        <ToolbarItem Text="Add" Clicked="AddItem_Clicked" />
+        <ToolbarItem Text="+" Clicked="AddItem_Clicked" />
     </ContentPage.ToolbarItems>
 
     <StackLayout>
@@ -44,12 +44,12 @@
                                 LineBreakMode="TailTruncation" Style="{DynamicResource ListItemDetailTextStyle}"
                                 FontSize="Small"  Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="1"/>
 
-                            <Button Text="Delete" Grid.Column="1" Grid.Row="0" 
+                            <Button Text="-" Grid.Column="1" Grid.Row="0" 
                                     BindingContext="{Binding Source={x:Reference CardsListView}, Path=BindingContext}" 
                                     Command="{Binding DeleteCardCommand}" 
                                     CommandParameter="{Binding Source={x:Reference CardItem}, Path=BindingContext}"/>
 
-                            <Button Text="Edit" Grid.Column="2" Grid.Row="0"
+                            <Button Text="/" Grid.Column="2" Grid.Row="0"
                                     BindingContext="{Binding Source={x:Reference CardsListView}, Path=BindingContext}" 
                                     Command="{Binding EditCardCommand}" 
                                     CommandParameter="{Binding Source={x:Reference CardItem}, Path=BindingContext}"/>

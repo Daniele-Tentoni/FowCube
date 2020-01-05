@@ -15,24 +15,21 @@
 
         public HttpClient Client { get; }
 
-        public IEnumerable<Collection> Items { get; set; }
-
         public CollectionStore()
         {
             this.Client = new HttpClient
             {
-                BaseAddress = new Uri($"{App.AzureBackendUrl}/collection/")
+                BaseAddress = new Uri($"{App.AzureBackendUrl}/app/")
             };
+
             try
             {
                 this.Client.DefaultRequestHeaders.Add("Accept", "application/json");
-                // this.Client.DefaultRequestHeaders.Add("Content-Type", "application/json");
             }
             catch (Exception e)
             {
                 Console.WriteLine(e.Message);
             }
-            this.Items = new List<Collection>();
         }
 
         private class CreateInfo

@@ -15,6 +15,7 @@
         /// The cards collection.
         /// </summary>
         public ObservableCollection<Card> Cards { get; set; }
+        public Collection SelectedCollection { get; set; }
         public Command LoadCardsCommand { get; set; }
         public Command EditCardCommand { get; set; }
         public Command DeleteCardCommand { get; set; }
@@ -27,7 +28,7 @@
             this.EditCardCommand = new Command(async (e) => await this.ExecuteEditCardCommand(e as Card));
             this.DeleteCardCommand = new Command(async (e) => await this.ExecuteDeleteCardCommand(e as Card));
 
-            MessagingCenter.Subscribe<NewItemPage, Card>(this, "AddItem", async (obj, item) =>
+            MessagingCenter.Subscribe<AddCardToCollectionPage, Card>(this, "AddItem", async (obj, item) =>
             {
                 var newItem = item as Card;
                 this.Cards.Add(newItem);
@@ -45,20 +46,33 @@
             try
             {
                 this.Cards.Clear();
-                var collection = await this.CollectionsStore.GetAsync("1", this.authInfo.GetAuthenticatedUid());
+                var collection = await this.CollectionsStore.GetAsync("1", this.AuthInfo.GetAuthenticatedUid());
                 if (collection == null)
                 {
-                    var res = await this.CollectionsStore.CreateAsync("1", this.authInfo.GetAuthenticatedUid());
+                    var res = await this.CollectionsStore.CreateAsync("1", this.AuthInfo.GetAuthenticatedUid());
                     if(res)
                     {
-                        collection = await this.CollectionsStore.GetAsync("1", this.authInfo.GetAuthenticatedUid());
+                        collection = await this.CollectionsStore.GetAsync("1", this.AuthInfo.GetAuthenticatedUid());
+                        if(collection == null)
+                        {
+                            Device.BeginInvokeOnMainThread(() =>
+                            {
+                                Application.Current.MainPage.DisplayAlert("Alert", "No collection found.", "OK");
+                            });
+                        }
                     }
                 }
+                this.Title = collection.Name;
+                this.SelectedCollection = collection;
 
-                var items = await this.CardStore.GetItemsAsync(true);
-                foreach (var item in items)
+                // var items = await this.CardStore.GetItemsAsync(true);
+                foreach (var item in collection.CardsIn)
                 {
-                    this.Cards.Add(item);
+                    var card = await this.CardStore.GetItemAsync(item);
+                    if(card != null)
+                    {
+                        this.Cards.Add(card);
+                    }
                 }
             }
             catch (Exception ex)
