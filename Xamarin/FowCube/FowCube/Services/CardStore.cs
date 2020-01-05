@@ -21,8 +21,9 @@
         {
             this.Client = new HttpClient
             {
-                BaseAddress = new Uri($"https://us-central1-fowcube.cloudfunctions.net/app/")
+                BaseAddress = new Uri($"{App.AzureBackendUrl}/cards/")
             };
+
             try
             {
                 this.Client.DefaultRequestHeaders.Add("Accept", "application/json");
@@ -32,6 +33,7 @@
             {
                 Console.WriteLine(e.Message);
             }
+
             this.Items = new List<Card>();
         }
 

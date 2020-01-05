@@ -33,27 +33,23 @@
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
 
-                            <!-- 
-                                Questo l'ho rimosso perché dava fastidio con il layout.
-                                Quando capirù come usarlo allora lo rimetterò su.
-                            -->
-                            <!--<StackLayout Padding="10" Grid.Column="1" Grid.Row="1" Grid.RowSpan="2"></StackLayout>-->
                             <Label Text="{Binding Name}" d:Text="{Binding .}"
                                 LineBreakMode="TailTruncation" Style="{DynamicResource ListItemTextStyle}" 
                                 FontSize="Medium"  Grid.Column="0" Grid.Row="0" />
                             
                             <Label Text="{Binding Description}" d:Text="Item descripton"
                                 LineBreakMode="TailTruncation" Style="{DynamicResource ListItemDetailTextStyle}"
-                                FontSize="Small"  Grid.Column="0" Grid.Row="1"/>
+                                FontSize="Small"  Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="1"/>
 
                             <Button Text="Delete" Grid.Column="1" Grid.Row="0" 
                                     BindingContext="{Binding Source={x:Reference CardsListView}, Path=BindingContext}" 
                                     Command="{Binding DeleteCardCommand}" 
                                     CommandParameter="{Binding Source={x:Reference CardItem}, Path=BindingContext}"/>
 
-                            <Button Text="Edit" Grid.Column="1" Grid.Row="1"
+                            <Button Text="Edit" Grid.Column="2" Grid.Row="0"
                                     BindingContext="{Binding Source={x:Reference CardsListView}, Path=BindingContext}" 
                                     Command="{Binding EditCardCommand}" 
                                     CommandParameter="{Binding Source={x:Reference CardItem}, Path=BindingContext}"/>
