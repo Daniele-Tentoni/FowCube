@@ -32,6 +32,9 @@
                     case (int)MenuItemType.Browse:
                         this.MenuPages.Add(id, new NavigationPage(new ItemsPage()));
                         break;
+                    case (int)MenuItemType.Login:
+                        this.MenuPages.Add(id, new NavigationPage(new LoginPage()));
+                        break;
                     case (int)MenuItemType.About:
                         this.MenuPages.Add(id, new NavigationPage(new AboutPage()));
                         break;

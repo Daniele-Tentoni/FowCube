@@ -4,6 +4,7 @@
     using Xamarin.Forms;
     using FowCube.Services;
     using FowCube.Views;
+    using FowCube.Authentication;
 
     public partial class App : Application
     {
@@ -12,13 +13,15 @@
         // If using other emulators besides stock Google images you may need to adjust the IP address.
         // Now there's the url to firebase.
         public static string AzureBackendUrl =
-            DeviceInfo.Platform == DevicePlatform.Android ? "https://us-central1-fowcube.cloudfunctions.net/app" : "http://localhost:5000";
+            DeviceInfo.Platform == DevicePlatform.Android ? "https://us-central1-fowcube.cloudfunctions.net" : "http://localhost:5000";
 
         public App()
         {
             this.InitializeComponent();
             DependencyService.Register<CardStore>();
-            this.MainPage = new MainPage();
+            DependencyService.Register<CollectionStore>();
+
+            this.MainPage = new LoginPage();
         }
 
         protected override void OnStart()
