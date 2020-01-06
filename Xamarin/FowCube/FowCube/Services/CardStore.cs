@@ -57,7 +57,7 @@
             if(item != null || this.IsConnected)
             {
                 var serializedItem = JsonConvert.SerializeObject(item);
-                var response = await this.Client.PostAsync($"api/card", new StringContent(serializedItem, Encoding.UTF8, "application/json"));
+                var response = await this.Client.PostAsync($"card", new StringContent(serializedItem, Encoding.UTF8, "application/json"));
                 return response.IsSuccessStatusCode;
             }
 
@@ -69,7 +69,7 @@
             if (string.IsNullOrEmpty(id) && !this.IsConnected)
                 return false;
 
-            var response = await this.Client.DeleteAsync($"api/card/{id}");
+            var response = await this.Client.DeleteAsync($"card/{id}");
 
             return response.IsSuccessStatusCode;
         }
@@ -78,7 +78,7 @@
         {
             if (id != null && this.IsConnected)
             {
-                var json = await this.Client.GetStringAsync($"api/card/{id}");
+                var json = await this.Client.GetStringAsync($"card/{id}");
                 return await Task.Run(() => JsonConvert.DeserializeObject<Card>(json));
             }
 
@@ -89,7 +89,7 @@
         {
             if (forceRefresh && this.IsConnected)
             {
-                var json = await this.Client.GetStringAsync($"api/card");
+                var json = await this.Client.GetStringAsync($"card");
                 this.Items = await Task.Run(() => JsonConvert.DeserializeObject<IEnumerable<Card>>(json));
             }
 
@@ -105,7 +105,7 @@
             var buffer = Encoding.UTF8.GetBytes(serializedItem);
             var byteContent = new ByteArrayContent(buffer);
 
-            var response = await this.Client.PutAsync(new Uri($"api/card/{item.Id}"), byteContent);
+            var response = await this.Client.PutAsync(new Uri($"card/{item.Id}"), byteContent);
 
             return response.IsSuccessStatusCode;
         }

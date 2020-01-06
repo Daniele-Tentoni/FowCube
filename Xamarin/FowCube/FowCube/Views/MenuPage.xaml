@@ -6,10 +6,34 @@
              mc:Ignorable="d"
              x:Class="FowCube.Views.MenuPage"
              Title="Menu">
-             
+
     <StackLayout VerticalOptions="FillAndExpand">
         <ListView x:Name="ListViewMenu"
+                  SeparatorVisibility="None"
                     HasUnevenRows="True">
+            <ListView.Header>
+                <Grid BackgroundColor="#03A9F4">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="10" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="10" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="30" />
+                        <RowDefinition Height="80" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="10" />
+                    </Grid.RowDefinitions>
+                    <!-- Queste prime righe sono per l'intestazione. -->
+                    <Label Grid.Column="1" Grid.Row="1" 
+                                   Text="Fow Cube" 
+                                   BackgroundColor="#03A9F4" TextColor="Black" FontSize="40"
+                                   HorizontalTextAlignment="Center" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand" />
+                    <Label Grid.Column="1" Grid.Row="2" 
+                                   Text="Username"
+                                   HorizontalOptions="CenterAndExpand" VerticalOptions="Fill"/>
+                </Grid>
+            </ListView.Header>
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <ViewCell>

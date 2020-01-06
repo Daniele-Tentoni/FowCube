@@ -8,9 +8,9 @@
     <ContentPage.Content>
         <StackLayout Spacing="20" Padding="15" VerticalOptions="Center">
             <Label Text="Username" FontSize="Medium" />
-            <Entry x:Name="EmailEntry" d:Text="Email" Text="daniele.tentoni.1996@gmail.com" FontSize="Small" />
-            <Label Text="Description" FontSize="Medium" />
-            <Entry IsPassword="True" x:Name="PasswordEntry" d:Text="Password" FontSize="Small" Margin="0" />
+            <Entry x:Name="EmailEntry" d:Text="Email" Text="1@1.com" FontSize="Small" />
+            <Label Text="Password" FontSize="Medium" />
+            <Entry IsPassword="True" x:Name="PasswordEntry" d:Text="Password" Text="123456" FontSize="Small" Margin="0" />
             <Button x:Name="LoginButton" Text="Login"/>
         </StackLayout>
     </ContentPage.Content>
