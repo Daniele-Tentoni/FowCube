@@ -1,14 +1,14 @@
 // Scaricare una carta
 fetch('https://www.fowdb.altervista.org/cards', {
-	method: 'get'
+    method: 'get'
 }).then(res => {
-	console.log(res.text());
-	return res.text();
+    console.log(res.text());
+    return res.text();
 }).then(data => {
-	console.log(data);
-	return;
-}).catch(function(error) {
-	console.log('There has been a problem with your fetch operation: ' + error.message);
+    console.log(data);
+    return;
+}).catch(error => {
+    console.log('There has been a problem with your fetch operation: ' + error.message);
 });
 // Trovare all'interno della pagina l'id ingleseid
 

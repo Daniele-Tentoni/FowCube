@@ -12,6 +12,8 @@ admin.initializeApp({
 });
 
 const db = admin.firestore();
+const cards = db.collection("cards");
+const collections = db.collection("collections");
 
 app.use(cors({ origin: true }));
 
@@ -21,7 +23,7 @@ app.get('/hello-world', (req, res) => {
 });
 
 // Create a card.
-app.post('/api/card', (req, res) => {
+app.post('/card', (req, res) => {
     (async() => {
         try {
             let l_index = 0; // Search the last index.
@@ -30,19 +32,26 @@ app.post('/api/card', (req, res) => {
                 .limit(1).get().then(snapshot => {
                     let docs = snapshot.docs;
                     for (let doc of docs) {
-                        l_index = doc.data().card_id;
+                        if (doc.data().card_id > l_index) {
+                            l_index = doc.data().card_id;
+                        }
                     }
                     return;
                 });
-            console.log(req.body.id !== null ? "In this case I have to assign an id." : "Not assigned id.");
-            let n_index = req.body.id !== null ? req.body.id : l_index + 1;
-            await db.collection('cards').doc('/' + n_index + '/')
-                .create({
-                    card_id: n_index,
-                    description: req.body.description,
-                    name: req.body.name
-                });
-            return res.status(200).send();
+
+            console.log(req.body.id !== undefined ?
+                "In this case I have to assign " + req.body.id + " as id." :
+                "Not assigned id. Set as " + l_index + ".");
+            let n_index = req.body.id !== undefined ? req.body.id : l_index + 1;
+            await db.collection('cards').add({
+                card_id: n_index,
+                description: req.body.description,
+                name: req.body.name
+            }).then((docRef) => {
+                console.log("Added a card with id:" + docRef.id);
+                return res.status(200).send(docRef.id);
+            });
+            return res.status(500).send(n_index);
         } catch (error) {
             console.log(error);
             return res.status(500).send(error);
@@ -51,7 +60,7 @@ app.post('/api/card', (req, res) => {
 });
 
 // Read a card.
-app.get('/api/card/:id', (req, res) => {
+app.get('/card/:id', (req, res) => {
     (async() => {
         try {
             const document = db.collection('cards').doc(req.params.id);
@@ -66,7 +75,7 @@ app.get('/api/card/:id', (req, res) => {
 });
 
 // Read all cards.
-app.get('/api/card', (req, res) => {
+app.get('/card', (req, res) => {
     (async() => {
         try {
             let query = db.collection('cards');
@@ -93,7 +102,7 @@ app.get('/api/card', (req, res) => {
 });
 
 // Update a card.
-app.put('/api/card/:item_id', (req, res) => {
+app.put('/card/:item_id', (req, res) => {
     (async() => {
         try {
             const document = db.collection('cards').doc(req.params.item_id);
@@ -110,7 +119,7 @@ app.put('/api/card/:item_id', (req, res) => {
 });
 
 // Delete a card.
-app.delete('/api/card/:item_id', (req, res) => {
+app.delete('/card/:item_id', (req, res) => {
     (async() => {
         try {
             const document = db.collection('cards').doc(req.params.item_id);
@@ -131,24 +140,27 @@ app.get('/api', (req, res) => {
 });
 
 // Create a collection.
-app.post('/api/collection', (req, res) => {
+app.post('/collection', (req, res) => {
     (async() => {
         try {
-            await db.collection('collections').push({
+            var docRef = await db.collection('collections').add({
                 name: req.body.name,
                 uid: req.body.uid,
                 cards_in: Array()
+            }).then((docRef) => {
+                console.log("Added a collection with id:" + docRef.id);
+                return res.status(200).send(docRef.id);
             });
-            return res.status(200).send();
+            return res.status(200).send(docRef.id);
         } catch (error) {
-            console.log(error);
+            console.log("Name: " + req.body.name + "Uid: " + req.body.uid + " Error: " + error);
             return res.status(500).send(error);
         }
     })();
 });
 
 // Read all the collection of the user.
-app.get('/api/collection/:uid', (req, res) => {
+app.get('/collection/:uid', (req, res) => {
     (async() => {
         try {
             let query = db.collection('collections').where("uid", "==", req.params.uid);
@@ -173,7 +185,7 @@ app.get('/api/collection/:uid', (req, res) => {
 });
 
 // Read only the selected collection.
-app.get('/api/collection/:name/:uid', (req, res) => {
+app.get('/collection/:uid/:name', (req, res) => {
     (async() => {
         try {
             let query = db.collection("collections")
@@ -189,9 +201,12 @@ app.get('/api/collection/:name/:uid', (req, res) => {
                     };
                     return res.status(200).send(selectedItem);
                 }
-                return;
+                return res.status(500).send("Didn't find any collection.");
+            }).catch((error) => {
+                console.log(error);
+                return res.status(500).send("Didn't find any collection.");
             });
-            return res.status(200).send(response);
+            return res.status(500).send("Body: " + req.body);
         } catch (error) {
             console.log(error);
             return res.status(500).send(error);
@@ -199,17 +214,53 @@ app.get('/api/collection/:name/:uid', (req, res) => {
     })();
 });
 
-// Update a collection.
-app.put('/api/collection/:item_id', (req, res) => {});
-
 // Remove a card from a collection.
-app.put('/api/collection/removecard/:item_id', (req, res) => {});
+app.put('/collection/removecard/:coll_id', (req, res) => {
+    (async() => {
+        try {
+            var docRef = db.collection("collections").doc(req.params.coll_id);
+            await docRef.get().then((doc) => {
+                if (doc.exists) {
+                    docRef.update({
+                        cards_in: firebase.firestore.FieldValue.arrayRemove(req.body.id)
+                    });
+                }
+                return res.status(200).send("Correctly removed.");
+            });
+            return res.status(500).send("Body: " + req.body);
+        } catch (error) {
+            console.log(error);
+            return res.status(500).send(error);
+        }
+    })
+});
 
 // Add a card in a collection.
-app.put('/api/collection/addcard/:item_id', (req, res) => {});
+app.post('/collection/addcard/:coll_id', (req, res) => {
+    (async() => {
+        try {
+            var docRef = db.collection("collections").doc(req.params.coll_id);
+            await docRef.get()
+                .then((doc) => {
+                    if (doc.exists) {
+                        docRef.update({
+                            cards_in: admin.firestore.FieldValue.arrayUnion(req.body.id)
+                        });
+                    }
+                    return res.status(200).send("Correctly updated.");
+                }).catch((error) => {
+                    console.error("Error adding document: ", error);
+                    return res.status(500).send("Error adding document. Body: " + req.body);
+                });
+        } catch (error) {
+            console.log("Add a card error: " + error);
+            return res.status(500).send(error);
+        }
+    })();
+});
 
 // Delete a collection.
-app.delete('/api/collection/:item_id', (req, res) => {});
+app.delete('/collection/:item_id', () => {});
 
 exports.app = functions.https.onRequest(app);
 
@@ -220,10 +271,10 @@ exports.addWelcomeMessages = functions.auth.user().onCreate(async(user) => {
 
     // Saves the new welcome message into the database
     // which then displays it in the FriendlyChat clients.
-    await admin.firestore().collection('cards').add({
-        name: 'Firebase Bot',
-        description: `${fullName} signed in for the first time! Welcome!`
-    });
+    // await admin.firestore().collection('cards').add({
+    //     name: 'Firebase Bot',
+    //     description: `${fullName} signed in for the first time! Welcome!`
+    // });
     console.log('Welcome message written to database.');
 });
 
