@@ -9,15 +9,39 @@
     
     <ContentPage.ToolbarItems>
         <ToolbarItem Text="Cancel" Clicked="Cancel_Clicked" />
-        <ToolbarItem Text="Select" Command="{Binding SelectedCommand}" />
+        <ToolbarItem Text="Select" Command="{Binding SelectedNewCardCommand}" />
     </ContentPage.ToolbarItems>
     
     <ContentPage.Content>
         <StackLayout Spacing="20" Padding="15">
             <Label Text="Text" FontSize="Medium" />
-            <Entry Text="{Binding Item.Name}" d:Text="Card name" FontSize="Small" />
+            <Entry Text="{Binding Name}" d:Text="Card name" FontSize="Small" />
             <Label Text="Description" FontSize="Medium" />
-            <Editor Text="{Binding Item.Description}" d:Text="Card description" FontSize="Small" Margin="0" />
+            <Editor Text="{Binding Description}" d:Text="Card description" FontSize="Small" Margin="0" />
+            <Label Text="Test to add an old card to the collection." />
+
+            <ListView x:Name="CardsListView" ItemsSource="{Binding Cards}"
+                      VerticalOptions="FillAndExpand" HasUnevenRows="true"
+                      RefreshCommand="{Binding LoadCardsCommand}" IsPullToRefreshEnabled="true"
+                      IsRefreshing="{Binding IsBusy, Mode=OneWay}" CachingStrategy="RecycleElement" 
+                      ItemSelected="CardsListView_ItemSelected"
+                      SelectedItem="{Binding SelectedCard}">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ViewCell>
+                            <StackLayout Padding="10">
+                                <Label Text="{Binding Name}" d:Text="{Binding .}"
+                                LineBreakMode="TailTruncation" Style="{DynamicResource ListItemTextStyle}" 
+                                FontSize="Medium" />
+
+                                <Label Text="{Binding Description}" d:Text="Item descripton"
+                                LineBreakMode="TailTruncation" Style="{DynamicResource ListItemDetailTextStyle}"
+                                FontSize="Small" />
+                            </StackLayout>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
         </StackLayout>
     </ContentPage.Content>
     

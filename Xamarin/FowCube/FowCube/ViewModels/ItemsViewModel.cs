@@ -1,13 +1,13 @@
 ﻿namespace FowCube.ViewModels
 {
-    using System;
-    using System.Collections.ObjectModel;
-    using System.Diagnostics;
-    using System.Threading.Tasks;
-
-    using Xamarin.Forms;
     using FowCube.Views;
     using FowCube.Models;
+    using System.Collections.ObjectModel;
+    using Xamarin.Forms;
+    using System.Threading.Tasks;
+    using System;
+    using System.Diagnostics;
+    using System.Collections.Generic;
 
     public class ItemsViewModel : BaseViewModel
     {
@@ -28,11 +28,17 @@
             this.EditCardCommand = new Command(async (e) => await this.ExecuteEditCardCommand(e as Card));
             this.DeleteCardCommand = new Command(async (e) => await this.ExecuteDeleteCardCommand(e as Card));
 
-            MessagingCenter.Subscribe<AddCardToCollectionPage, Card>(this, "AddItem", async (obj, item) =>
+            MessagingCenter.Subscribe<AddCardToCollectionViewModel, Card>(this, "AddItem", async (obj, item) =>
             {
                 var newItem = item as Card;
-                this.Cards.Add(newItem);
                 var res = await this.CardStore.AddItemAsync(newItem);
+            });
+
+            MessagingCenter.Subscribe<AddCardToCollectionViewModel, Card>(this, "AddCardToCollection", async (obj, item) =>
+            {
+                var cardIn = item as Card;
+                var res = await this.CollectionsStore.AddCardToCollection(this.SelectedCollection.Id, cardIn);
+                if (res) await Task.Run(() => this.ExecuteLoadCardsCommand());
             });
         }
 
@@ -50,7 +56,7 @@
                 if (collection == null)
                 {
                     var res = await this.CollectionsStore.CreateAsync("1", this.AuthInfo.GetAuthenticatedUid());
-                    if(res)
+                    if(res != null)
                     {
                         collection = await this.CollectionsStore.GetAsync("1", this.AuthInfo.GetAuthenticatedUid());
                         if(collection == null)
@@ -68,15 +74,19 @@
                 // var items = await this.CardStore.GetItemsAsync(true);
                 foreach (var item in collection.CardsIn)
                 {
-                    var card = await this.CardStore.GetItemAsync(item);
-                    if(card != null)
+                    if (!this.Cards.Contains(new Card { Id = item }))
                     {
-                        this.Cards.Add(card);
+                        var card = await this.CardStore.GetItemAsync(item);
+                        if (card != null)
+                        {
+                            this.Cards.Add(card);
+                        }
                     }
                 }
             }
             catch (Exception ex)
             {
+                // This may occure when api fail twice to load collection.
                 Debug.WriteLine(ex);
             }
             finally

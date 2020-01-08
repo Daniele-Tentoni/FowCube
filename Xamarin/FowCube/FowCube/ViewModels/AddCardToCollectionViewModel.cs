@@ -21,23 +21,48 @@
         /// </summary>
         public Command LoadCardsCommand { get; set; }
 
-        public ICommand SelectedCommand { get; set; }
+        /// <summary>
+        /// Input the selected card from the input fields to the collection.
+        /// </summary>
+        public ICommand SelectedNewCardCommand { get; set; }
+
+        /// <summary>
+        /// Input the selected card from the list.
+        /// </summary>
+        public ICommand SelectedOldCardCommand { get; set; }
 
         /// <summary>
         /// The user selected card inside the controller.
         /// </summary>
         public Card SelectedCard { get; set; }
 
+        public string Name { get; set; }
+
+        public string Description { get; set; }
+
         public AddCardToCollectionViewModel(string collection)
         {
             // Change the title accordly to the collection I want to modify.
             this.Title = $"Add Card to {collection}";
+            this.SelectedCard = new Card();
+            this.Cards = new ObservableCollection<Card>();
+
+            this.SelectedNewCardCommand = new Command(async () => await this.ExecuteSelectedCardCommand(true));
+            this.SelectedOldCardCommand = new Command(async () => await this.ExecuteSelectedCardCommand(false));
+            this.LoadCardsCommand = new Command(async () => await this.ExecuteLoadCardsCommand());
+        }
+
+        async Task ExecuteLoadCardsCommand()
+        {
+            if (this.IsBusy)
+                return;
+
+            this.IsBusy = true;
 
             // Load all the cards. TODO: Load only when neccessary.
-            this.Cards = new ObservableCollection<Card>();
             try
             {
-                var cards = this.CardStore.GetItemsAsync().Result;
+                var cards = await this.CardStore.GetItemsAsync(true);
                 if (cards != null)
                 {
                     foreach (var card in cards)
@@ -50,13 +75,26 @@
             {
                 Debug.WriteLine(e.Message);
             }
-
-            this.SelectedCommand = new Command(async () => await this.ExecuteSelectedCardCommand());
+            finally
+            {
+                this.IsBusy = false;
+            }
         }
 
-        async Task ExecuteSelectedCardCommand()
+        /// <summary>
+        /// Add a new card to the collection and return to the collection page.
+        /// </summary>
+        /// <param name="newCard">If the card is new or old.</param>
+        /// <returns>Nothing.</returns>
+        public async Task ExecuteSelectedCardCommand(bool newCard)
         {
-            MessagingCenter.Send(this, "AddItem", this.SelectedCard);
+            // Add a card to the database before add that to collections.
+            if (newCard)
+            {
+                MessagingCenter.Send(this, "AddItem", new Card { Name = Name, Description = Description });
+            }
+
+            MessagingCenter.Send(this, "AddCardToCollection", this.SelectedCard);
             await Application.Current.MainPage.Navigation.PopModalAsync();
         }
     }
