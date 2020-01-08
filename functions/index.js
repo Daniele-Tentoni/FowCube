@@ -3,6 +3,7 @@ const admin = require('firebase-admin');
 const express = require('express');
 const cors = require('cors');
 const app = express();
+const func_coll = express(); // Represent the cloud function "Collection".
 
 var serviceAccount = require("./permissions.json");
 
@@ -13,7 +14,7 @@ admin.initializeApp({
 
 const db = admin.firestore();
 const cards = db.collection("cards");
-const collections = db.collection("collections");
+const db_coll = db.collection("collections"); // Represent the collection "Collection".
 
 app.use(cors({ origin: true }));
 
@@ -215,10 +216,10 @@ app.get('/collection/:uid/:name', (req, res) => {
 });
 
 // Remove a card from a collection.
-app.put('/collection/removecard/:coll_id', (req, res) => {
+func_coll.put('/collection/removecard/:coll_id', (req, res) => {
     (async() => {
         try {
-            var docRef = db.collection("collections").doc(req.params.coll_id);
+            var docRef = db_coll.doc(req.params.coll_id);
             await docRef.get().then((doc) => {
                 if (doc.exists) {
                     docRef.update({
@@ -236,10 +237,10 @@ app.put('/collection/removecard/:coll_id', (req, res) => {
 });
 
 // Add a card in a collection.
-app.post('/collection/addcard/:coll_id', (req, res) => {
+func_coll.post('/collection/addcard/:coll_id', (req, res) => {
     (async() => {
         try {
-            var docRef = db.collection("collections").doc(req.params.coll_id);
+            var docRef = db_coll.doc(req.params.coll_id);
             await docRef.get()
                 .then((doc) => {
                     if (doc.exists) {
