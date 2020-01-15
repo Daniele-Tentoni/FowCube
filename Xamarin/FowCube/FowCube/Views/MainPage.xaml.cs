@@ -23,25 +23,26 @@
 
         public Dictionary<int, NavigationPage> MenuPages { get; } = new Dictionary<int, NavigationPage>();
 
-        public async Task NavigateFromMenu(int id)
+        public async Task NavigateFromMenu(HomeMenuItem item)
         {
-            if (!this.MenuPages.ContainsKey(id))
+            // Add the page to the Menu Pages list, that pair Id -> Navigation Page.
+            if (!this.MenuPages.ContainsKey(item.Id))
             {
-                switch (id)
+                switch (item.Id)
                 {
                     case (int)MenuItemType.Browse:
-                        this.MenuPages.Add(id, new NavigationPage(new ItemsPage()));
+                        this.MenuPages.Add(item.Id, new NavigationPage(new ItemsPage(item.Arg)));
                         break;
                     case (int)MenuItemType.Login:
-                        this.MenuPages.Add(id, new NavigationPage(new LoginPage()));
+                        this.MenuPages.Add(item.Id, new NavigationPage(new LoginPage()));
                         break;
                     case (int)MenuItemType.About:
-                        this.MenuPages.Add(id, new NavigationPage(new AboutPage()));
+                        this.MenuPages.Add(item.Id, new NavigationPage(new AboutPage()));
                         break;
                 }
             }
 
-            var newPage = this.MenuPages[id];
+            var newPage = this.MenuPages[item.Id];
 
             if (newPage != null && this.Detail != newPage)
             {

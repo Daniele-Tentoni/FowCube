@@ -2,34 +2,46 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Net;
     using System.Net.Http;
     using System.Text;
     using System.Threading.Tasks;
     using FowCube.Models;
+    using FowCube.Models.Collection;
     using Newtonsoft.Json;
-    using Xamarin.Essentials;
 
-    public class CollectionStore
+    public class CollectionStore : BasicStore
     {
-        bool IsConnected => Connectivity.NetworkAccess == NetworkAccess.Internet;
+        public CollectionStore() : base("func_coll") { }
 
-        public HttpClient Client { get; }
-
-        public CollectionStore()
+        public class CollectionsInfo
         {
-            this.Client = new HttpClient
-            {
-                BaseAddress = new Uri($"{App.AzureBackendUrl}/app/")
-            };
+            [JsonProperty(PropertyName = "uid")]
+            public string UserId { get; set; }
 
-            try
+            [JsonProperty(PropertyName = "collections")]
+            public List<BasicCollection> Collections { get; set; }
+        }
+
+        /// <summary>
+        /// Return the list of all collections of a user.
+        /// </summary>
+        /// <param name="uid">User Identifier.</param>
+        /// <returns>List of collections.</returns>
+        public async Task<List<BasicCollection>> GetAllUserCollectionsAsync(string uid)
+        {
+            if (uid == null) throw new ArgumentNullException();
+            if (!this.IsConnected) throw new NotConnectedException();
+
+            var message = await this.Client.GetAsync($"collections/{uid}");
+            if(!message.IsSuccessStatusCode)
             {
-                this.Client.DefaultRequestHeaders.Add("Accept", "application/json");
+                if (message.StatusCode.Equals(HttpStatusCode.NotFound)) throw new HttpRequestException(message.ReasonPhrase);
+                return null;
             }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.Message);
-            }
+
+            var result = JsonConvert.DeserializeObject<CollectionsInfo>(message.Content.ReadAsStringAsync().Result);
+            return result.Collections;
         }
 
         private class CreateInfo
@@ -69,14 +81,15 @@
         /// <param name="id">Id of the collection.</param>
         /// <param name="uid">Id of the user.</param>
         /// <returns>Return the selected collection.</returns>
-        public async Task<Collection> GetAsync(string id, string uid)
+        public async Task<Collection> GetAsync(string collectionId)
         {
-            if (id == null || uid == null || !this.IsConnected) return null;
+            if (collectionId == null) throw new ArgumentNullException();
+            if (!this.IsConnected) throw new NotConnectedException();
 
-            var response = await this.Client.GetAsync($"collection/{uid}/{id}");
+            var response = await this.Client.GetAsync($"collection/{collectionId}");
             if (!response.IsSuccessStatusCode)
             {
-                // throw new HttpRequestException(response.StatusCode.ToString(), new HttpRequestException(response.Content.ReadAsStringAsync().Result));
+                if (response.StatusCode.Equals(HttpStatusCode.NotFound)) throw new HttpRequestException(response.ReasonPhrase);
                 return null;
             }
 
@@ -102,27 +115,34 @@
             return false;
         }
 
+        /// <summary>
+        /// Add a card to the colletion.
+        /// </summary>
+        /// <param name="collId">Collection Id.</param>
+        /// <param name="card">Card Entity.</param>
+        /// <returns>True for a successful operation.</returns>
         public async Task<bool> AddCardToCollection(string collId, Card card)
         {
-            if (collId == null || card == null) {
-                throw new ArgumentNullException();
-            }
+            if (collId == null || card == null) throw new ArgumentNullException();
 
             var serializedItem = JsonConvert.SerializeObject(card);
             var response = await this.Client.PutAsync($"collection/addcard/{collId}", new StringContent(serializedItem, Encoding.UTF8, "application/json"));
             return response.IsSuccessStatusCode;
         }
 
-        public async Task<bool> RemoveCardFromCollection(string collId, string[] cardsOut)
+        /// <summary>
+        /// Remove a card from a collection.
+        /// </summary>
+        /// <param name="collId">Collection Id.</param>
+        /// <param name="card">Card Entity.</param>
+        /// <returns>True for a successful operation.</returns>
+        public async Task<bool> RemoveCardFromCollection(string collId, Card card)
         {
-            if (collId != null && cardsOut != null && cardsOut.Length > 0 && this.IsConnected)
-            {
-                var serializedItem = JsonConvert.SerializeObject(cardsOut);
-                var response = await this.Client.PutAsync($"collection/removecard/{collId}", new StringContent(serializedItem, Encoding.UTF8, "application/json"));
-                return response.IsSuccessStatusCode;
-            }
+            if (collId == null || card == null) throw new ArgumentNullException();
 
-            return false;
+            var serializedItem = JsonConvert.SerializeObject(card);
+            var response = await this.Client.PutAsync($"collection/removecard/{collId}", new StringContent(serializedItem, Encoding.UTF8, "application/json"));
+            return response.IsSuccessStatusCode;
         }
 
         public Task<bool> UpdateItemAsync(Collection item) => throw new System.NotImplementedException();

@@ -1,13 +1,12 @@
 ﻿namespace FowCube.ViewModels
 {
-    using FowCube.Views;
     using FowCube.Models;
     using System.Collections.ObjectModel;
     using Xamarin.Forms;
     using System.Threading.Tasks;
     using System;
     using System.Diagnostics;
-    using System.Collections.Generic;
+    using FowCube.Models.Collection;
 
     public class ItemsViewModel : BaseViewModel
     {
@@ -20,10 +19,11 @@
         public Command EditCardCommand { get; set; }
         public Command DeleteCardCommand { get; set; }
 
-        public ItemsViewModel()
+        public ItemsViewModel(string collectionId)
         {
             this.Title = "Browse";
             this.Cards = new ObservableCollection<Card>();
+            this.SelectedCollection = new Collection() { Id = collectionId };
             this.LoadCardsCommand = new Command(async () => await this.ExecuteLoadCardsCommand());
             this.EditCardCommand = new Command(async (e) => await this.ExecuteEditCardCommand(e as Card));
             this.DeleteCardCommand = new Command(async (e) => await this.ExecuteDeleteCardCommand(e as Card));
@@ -44,7 +44,7 @@
 
         async Task ExecuteLoadCardsCommand()
         {
-            if (this.IsBusy)
+            if (this.IsBusy || this.SelectedCollection == null || this.SelectedCollection.Id == "")
                 return;
 
             this.IsBusy = true;
@@ -52,13 +52,13 @@
             try
             {
                 this.Cards.Clear();
-                var collection = await this.CollectionsStore.GetAsync("1", this.AuthInfo.GetAuthenticatedUid());
+                var collection = await this.CollectionsStore.GetAsync(this.SelectedCollection.Id);
                 if (collection == null)
                 {
                     var res = await this.CollectionsStore.CreateAsync("1", this.AuthInfo.GetAuthenticatedUid());
                     if(res != null)
                     {
-                        collection = await this.CollectionsStore.GetAsync("1", this.AuthInfo.GetAuthenticatedUid());
+                        collection = await this.CollectionsStore.GetAsync(this.SelectedCollection.Id);
                         if(collection == null)
                         {
                             Device.BeginInvokeOnMainThread(() =>
@@ -68,6 +68,7 @@
                         }
                     }
                 }
+
                 this.Title = collection.Name;
                 this.SelectedCollection = collection;
 

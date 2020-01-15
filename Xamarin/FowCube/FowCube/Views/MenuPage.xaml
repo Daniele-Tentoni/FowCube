@@ -5,12 +5,17 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d"
              x:Class="FowCube.Views.MenuPage"
-             Title="Menu">
+             Title="{Binding Title}">
 
     <StackLayout VerticalOptions="FillAndExpand">
         <ListView x:Name="ListViewMenu"
-                  SeparatorVisibility="None"
-                    HasUnevenRows="True">
+                  ItemsSource="{Binding MenuItems}"
+                  VerticalOptions="FillAndExpand"
+                  HasUnevenRows="True"
+                  RefreshCommand="{Binding LoadMenuItemsCommand}"
+                  IsPullToRefreshEnabled="True"
+                  IsRefreshing="{Binding IsBusy, Mode=OneWay}"
+                  CachingStrategy="RecycleElement">
             <ListView.Header>
                 <Grid BackgroundColor="#03A9F4">
                     <Grid.ColumnDefinitions>

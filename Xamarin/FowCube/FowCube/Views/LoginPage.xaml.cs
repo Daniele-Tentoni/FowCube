@@ -2,6 +2,7 @@
 {
     using FowCube.Authentication;
     using System;
+    using Xamarin.Essentials;
     using Xamarin.Forms;
     using Xamarin.Forms.Xaml;
 
@@ -18,21 +19,25 @@
 
         async void LoginClicked(object sender, EventArgs e)
         {
+            string token = "";
             try
             {
-                string Token = await this.auth.LoginWithEmailPasswordAsync(this.EmailEntry.Text, this.PasswordEntry.Text);
-                if (Token != "")
-                {
-                    App.Current.MainPage = new MainPage();
-                }
-                else
-                {
-                    this.ShowError();
-                }
+                token = await this.auth.LoginWithEmailPasswordAsync(this.EmailEntry.Text, this.PasswordEntry.Text);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 await this.DisplayAlert("Authentication Failed", $"{ex.Message}: {this.auth == null}", "OK");
+            }
+
+            if (token != "")
+            {
+                await SecureStorage.SetAsync("login_token", token);
+                await SecureStorage.SetAsync("login_id", this.auth.GetAuthenticatedUid());
+                Application.Current.MainPage = new MainPage();
+            }
+            else
+            {
+                this.ShowError();
             }
         }
 

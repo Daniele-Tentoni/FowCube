@@ -1,7 +1,8 @@
 ﻿namespace FowCube.Views
 {
     using FowCube.Models;
-    using System.Collections.Generic;
+    using FowCube.Services;
+    using FowCube.ViewModels;
     using System.ComponentModel;
     using Xamarin.Forms;
 
@@ -11,30 +12,31 @@
     public partial class MenuPage : ContentPage
     {
         MainPage RootPage { get => Application.Current.MainPage as MainPage; }
-        private readonly List<HomeMenuItem> menuItems;
+        public CollectionStore CollectionsStore => new CollectionStore();
+        private readonly MenuPageViewModel viewModel;
 
         public MenuPage()
         {
             this.InitializeComponent();
+            this.BindingContext = this.viewModel = new MenuPageViewModel();
 
-            this.menuItems = new List<HomeMenuItem>
-            {
-                new HomeMenuItem {Id = MenuItemType.Browse, Title="Browse" },
-                new HomeMenuItem {Id = MenuItemType.Login, Title = "Login" },
-                new HomeMenuItem {Id = MenuItemType.About, Title="About" }
-            };
-
-            this.ListViewMenu.ItemsSource = this.menuItems;
-
-            this.ListViewMenu.SelectedItem = this.menuItems[0];
+            // this.ListViewMenu.SelectedItem = this.viewModel.MenuItems[0];
             this.ListViewMenu.ItemSelected += async (sender, e) =>
             {
+                // Navigate to the selected menu voice.
                 if (e.SelectedItem == null)
                     return;
 
-                var id = (int)((HomeMenuItem)e.SelectedItem).Id;
-                await this.RootPage.NavigateFromMenu(id);
+                await this.RootPage.NavigateFromMenu((HomeMenuItem)e.SelectedItem);
             };
+        }
+
+        protected override void OnAppearing()
+        {
+            base.OnAppearing();
+
+            if (this.viewModel.MenuItems.Count == 0)
+                this.viewModel.LoadMenuItemsCommand.Execute(null);
         }
     }
 }

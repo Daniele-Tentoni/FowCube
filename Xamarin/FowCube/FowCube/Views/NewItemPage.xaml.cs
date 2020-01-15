@@ -1,6 +1,6 @@
 ﻿namespace FowCube.Views
 {
-    using FowCube.Models;
+    using FowCube.Models.Collection;
     using FowCube.ViewModels;
     using System;
     using System.ComponentModel;

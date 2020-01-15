@@ -14,12 +14,13 @@
     {
         readonly ItemsViewModel viewModel;
 
-        public ItemsPage()
+        public ItemsPage(string collectionId)
         {
             this.InitializeComponent();
-
-            this.BindingContext = this.viewModel = new ItemsViewModel();
+            this.BindingContext = this.viewModel = new ItemsViewModel(collectionId);
         }
+
+        public ItemsPage() : this("") { }
 
         async void OnItemSelected(object sender, SelectedItemChangedEventArgs args)
         {
