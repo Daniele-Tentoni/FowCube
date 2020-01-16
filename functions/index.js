@@ -24,7 +24,14 @@ app.get('/hello-world', (req, res) => {
     return res.status(200).send('Hello World!');
 });
 
-// Create a card.
+/*
+ Ho lasciato la possibilità di specificare l'id nel body della chiamata
+ perché in un futuro si aggiungeranno le carte tramite una chiamata API
+ da repository ufficiali per poter gestire in modo automatico tali ope-
+ razioni. Chiedere con @Alain d'Ettore di mettere a disposizione un 
+ endpoint al suo portale per scaricare i dati di cui ho bisogno.
+ !! Lui ha solamente la lingua inglese, valutare di creare delle traduzioni.
+ */
 app.post('/card', (req, res) => {
     (async() => {
         try {
@@ -39,10 +46,6 @@ app.post('/card', (req, res) => {
                     }
                     return;
                 });
-
-            console.log(req.body.id !== undefined ?
-                "In this case I have to assign " + req.body.id + " as id." :
-                "Not assigned id. Set as " + l_index + ".");
             let n_index = req.body.id !== undefined ? req.body.id : l_index + 1;
             await cards_coll.add({
                 card_id: n_index,
@@ -51,8 +54,10 @@ app.post('/card', (req, res) => {
             }).then((docRef) => {
                 console.log("Added a card with id:" + docRef.id);
                 return res.status(200).send(docRef.id);
+            }).catch((error) => {
+                console.log(error);
+                return res.status(500).send(error);
             });
-            return res.status(500).send(n_index);
         } catch (error) {
             console.log(error);
             return res.status(500).send(error);
