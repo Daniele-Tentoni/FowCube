@@ -1,7 +1,9 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Firebase.Auth;
 using FowCube.Authentication;
 using FowCube.Droid.Implementations;
+using Xamarin.Forms.Internals;
 
 [assembly: Xamarin.Forms.Dependency(typeof(FireAuth))]
 namespace FowCube.Droid.Implementations
@@ -28,6 +30,11 @@ namespace FowCube.Droid.Implementations
             catch (FirebaseAuthInvalidUserException e)
             {
                 e.PrintStackTrace();
+                return "";
+            }
+            catch (Exception e)
+            {
+                Log.Warning("FIREBASE LOGIN", e.StackTrace);
                 return "";
             }
         }

@@ -14,21 +14,9 @@
         private readonly IAuth auth;
         public LoginPage()
         {
+            this.InitializeComponent();
+            this.LoginButton.Clicked += this.LoginClicked;
             this.auth = DependencyService.Get<IAuth>();
-            string mail = SecureStorage.GetAsync("user_mail").Result;
-            string pass = SecureStorage.GetAsync("user_pass").Result;
-            if (string.IsNullOrEmpty(mail) || string.IsNullOrEmpty(pass))
-            {
-                this.InitializeComponent();
-                this.LoginButton.Clicked += this.LoginClicked;
-            }
-            else
-            {
-                if (this.ExecuteLogin(mail, pass).Result)
-                {
-                    _ = this.LoginExecuted(mail, pass);
-                }
-            }
         }
 
         async void LoginClicked(object sender, EventArgs e)
@@ -38,7 +26,7 @@
 
             if (await this.ExecuteLogin(mail, pass))
             {
-                await this.LoginExecuted(mail, pass);
+                this.LoginExecuted();
             }
         }
 
@@ -46,7 +34,8 @@
         {
             try
             {
-                return !string.IsNullOrEmpty(await this.auth.LoginWithEmailPasswordAsync(mail, pass));
+                var result = await this.auth.LoginWithEmailPasswordAsync(mail, pass);
+                return !string.IsNullOrEmpty(result);
             }
             catch (Exception ex)
             {
@@ -56,13 +45,17 @@
             return false;
         }
 
-        async Task LoginExecuted(string mail, string pass)
+        protected override void OnAppearing()
         {
-            await SecureStorage.SetAsync("user_mail", mail);
-            await SecureStorage.SetAsync("user_pass", pass);
-            await SecureStorage.SetAsync("login_id", this.auth.GetAuthenticatedUid());
-            Application.Current.MainPage = new MainPage();
+            base.OnAppearing();
+            string authId = this.auth.GetAuthenticatedUid();
+            if (!string.IsNullOrEmpty(authId))
+            {
+                this.LoginExecuted();
+            }
         }
+
+        private void LoginExecuted() => Application.Current.MainPage = new MainPage();
 
         async private Task ShowError() => await this.DisplayAlert("Authentication Failed", "E-mail or password are incorrect. Try again!", "OK");
     }

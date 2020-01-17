@@ -4,6 +4,7 @@
     using FowCube.Services;
     using FowCube.ViewModels;
     using System.ComponentModel;
+    using System.Linq;
     using Xamarin.Forms;
 
     // Learn more about making custom code visible in the Xamarin.Forms previewer
@@ -23,11 +24,8 @@
             // this.ListViewMenu.SelectedItem = this.viewModel.MenuItems[0];
             this.ListViewMenu.ItemSelected += async (sender, e) =>
             {
-                // Navigate to the selected menu voice.
-                if (e.SelectedItem == null)
-                    return;
-
-                await this.RootPage.NavigateFromMenu((HomeMenuItem)e.SelectedItem);
+                if (e == null) return;
+                await this.viewModel.ExecuteMenuSelectionCommand((HomeMenuItem)e.SelectedItem);
             };
         }
 

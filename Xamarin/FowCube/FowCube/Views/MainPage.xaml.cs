@@ -15,10 +15,8 @@
         public MainPage()
         {
             this.InitializeComponent();
-
             this.MasterBehavior = MasterBehavior.Popover;
-
-            this.MenuPages.Add((int)MenuItemType.Browse, (NavigationPage)this.Detail);
+            // this.MenuPages.Add((int)MenuItemType.Browse, (NavigationPage)this.Detail);
         }
 
         public Dictionary<int, NavigationPage> MenuPages { get; } = new Dictionary<int, NavigationPage>();
@@ -28,15 +26,15 @@
             // Add the page to the Menu Pages list, that pair Id -> Navigation Page.
             if (!this.MenuPages.ContainsKey(item.Id))
             {
-                switch (item.Id)
+                switch (item.MenuType)
                 {
-                    case (int)MenuItemType.Browse:
+                    case MenuItemType.Browse:
                         this.MenuPages.Add(item.Id, new NavigationPage(new ItemsPage(item.Arg)));
                         break;
-                    case (int)MenuItemType.Login:
+                    case MenuItemType.Login:
                         this.MenuPages.Add(item.Id, new NavigationPage(new LoginPage()));
                         break;
-                    case (int)MenuItemType.About:
+                    case MenuItemType.About:
                         this.MenuPages.Add(item.Id, new NavigationPage(new AboutPage()));
                         break;
                 }
@@ -53,6 +51,11 @@
 
                 this.IsPresented = false;
             }
+        }
+
+        protected override void OnAppearing()
+        {
+            base.OnAppearing();
         }
     }
 }
