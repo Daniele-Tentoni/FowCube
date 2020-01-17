@@ -15,7 +15,6 @@
     <AndroidManifest>Properties\AndroidManifest.xml</AndroidManifest>
     <MonoAndroidResourcePrefix>Resources</MonoAndroidResourcePrefix>
     <MonoAndroidAssetsPrefix>Assets</MonoAndroidAssetsPrefix>
-    <AndroidUseLatestPlatformSdk>false</AndroidUseLatestPlatformSdk>
     <TargetFrameworkVersion>v9.0</TargetFrameworkVersion>
     <AndroidEnableSGenConcurrent>true</AndroidEnableSGenConcurrent>
     <AndroidHttpClientHandlerType>Xamarin.Android.Net.AndroidClientHandler</AndroidHttpClientHandlerType>
@@ -31,9 +30,6 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AndroidLinkMode>None</AndroidLinkMode>
-    <AotAssemblies>false</AotAssemblies>
-    <EnableLLVM>false</EnableLLVM>
-    <BundleAssemblies>false</BundleAssemblies>
     <GenerateSerializationAssemblies>On</GenerateSerializationAssemblies>
     <AndroidDexTool>dx</AndroidDexTool>
     <AndroidSupportedAbis />
@@ -116,7 +112,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\FowCube\FowCube.csproj">
-      <Project>{EC9DA4D3-BDA8-4D19-872B-98DDB6793992}</Project>
+      <Project>{F08B3A01-F4A7-4678-BCFB-CA7A0BB57412}</Project>
       <Name>FowCube</Name>
     </ProjectReference>
   </ItemGroup>

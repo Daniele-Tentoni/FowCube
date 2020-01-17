@@ -27,6 +27,7 @@
             if (!(args.SelectedItem is Card item))
                 return;
 
+            // Go to the card detail page.
             await this.Navigation.PushAsync(new ItemDetailPage(new ItemDetailViewModel(item)));
 
             // Manually deselect item.
