@@ -38,9 +38,9 @@
                     <Label.FormattedText>
                         <FormattedString>
                             <FormattedString.Spans>
-                                <Span Text="{Binding AppInfo.Name}" FontAttributes="Bold" FontSize="22" />
+                                <Span Text="{Binding AppName}" FontAttributes="Bold" FontSize="22" />
                                 <Span Text=" " />
-                                <Span Text="{Binding AppInfo.Version}" ForegroundColor="{StaticResource LightTextColor}" />
+                                <Span Text="{Binding AppVersion}" ForegroundColor="{StaticResource LightTextColor}" />
                             </FormattedString.Spans>
                         </FormattedString>
                     </Label.FormattedText>

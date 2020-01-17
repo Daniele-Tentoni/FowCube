@@ -13,5 +13,9 @@
         }
 
         public ICommand OpenWebCommand { get; } = new Command(() => Launcher.OpenAsync(new Uri("https://xamarin.com/platform")));
+
+        public string AppName => AppInfo.Name;
+
+        public string AppVersion => AppInfo.Version.ToString();
     }
 }
