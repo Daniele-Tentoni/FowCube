@@ -149,7 +149,7 @@ app.get('/api', (req, res) => {
 func_coll.post('/collection', (req, res) => {
     (async() => {
         try {
-            var docRef = await cards_coll.add({
+            var docRef = await db_coll.add({
                 name: req.body.name,
                 uid: req.body.uid,
                 cards_in: Array()

@@ -37,7 +37,6 @@
             if(!message.IsSuccessStatusCode)
             {
                 if (message.StatusCode.Equals(HttpStatusCode.NotFound)) throw new HttpRequestException(message.ReasonPhrase);
-                return null;
             }
 
             var result = JsonConvert.DeserializeObject<CollectionsInfo>(message.Content.ReadAsStringAsync().Result);

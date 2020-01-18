@@ -6,6 +6,7 @@
     using Xamarin.Forms;
 
     using FowCube.Models;
+    using FowCube.Authentication;
 
     // Learn more about making custom code visible in the Xamarin.Forms previewer
     // by visiting https://aka.ms/xamarinforms-previewer
@@ -31,13 +32,27 @@
                     case MenuItemType.Browse:
                         this.MenuPages.Add(item.Id, new NavigationPage(new ItemsPage(item.Arg)));
                         break;
-                    case MenuItemType.Login:
-                        this.MenuPages.Add(item.Id, new NavigationPage(new LoginPage()));
-                        break;
                     case MenuItemType.About:
                         this.MenuPages.Add(item.Id, new NavigationPage(new AboutPage()));
                         break;
+                    case MenuItemType.Settings:
+                        this.MenuPages.Add(item.Id, new NavigationPage(new AboutPage()));
+                        break;
+                    case MenuItemType.Login:
+                        this.MenuPages.Add(item.Id, new NavigationPage(new LoginPage()));
+                        break;
+                    case MenuItemType.Logout:
+                        this.MenuPages.Add(item.Id, new NavigationPage(new LoginPage()));
+                        break;
                 }
+            }
+
+            if(item.MenuType == MenuItemType.Logout)
+            {
+                DependencyService.Get<IAuth>().Logout();
+                DependencyService.Get<IGoogleManager>().Logout();
+                Application.Current.MainPage = new LoginPage();
+                return;
             }
 
             var newPage = this.MenuPages[item.Id];

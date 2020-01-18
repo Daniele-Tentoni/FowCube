@@ -5,11 +5,19 @@
     using Android.Runtime;
     using Android.OS;
     using Firebase;
+    using Android.Gms.Auth.Api.SignIn;
+    using Android.Gms.Common.Apis;
+    using Xamarin.Forms;
+    using FowCube.Authentication;
+    using FowCube.Droid.Implementations;
+    using Android.Gms.Auth.Api;
 
     [Activity(Label = "FowCube", Icon = "@mipmap/icon", Theme = "@style/MainTheme", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
     public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity
     {
         public FirebaseApp app;
+        public GoogleSignInOptions gso;
+        public GoogleApiClient apiClient;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -18,10 +26,11 @@
 
             base.OnCreate(savedInstanceState);
 
-            this.app = FirebaseApp.InitializeApp(Application.Context);
-
             Xamarin.Essentials.Platform.Init(this, savedInstanceState);
-            global::Xamarin.Forms.Forms.Init(this, savedInstanceState);
+            Forms.Init(this, savedInstanceState);
+
+            DependencyService.Register<IGoogleManager, GoogleManager>();
+            this.app = FirebaseApp.InitializeApp(this.Application.ApplicationContext);
 
             // Firebase.FirebaseApp.InitializeApp(this);
             this.LoadApplication(new App());
@@ -32,6 +41,17 @@
             Xamarin.Essentials.Platform.OnRequestPermissionsResult(requestCode, permissions, grantResults);
 
             base.OnRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
+
+        protected override void OnActivityResult(int requestCode, Result resultCode, Android.Content.Intent data)
+        {
+            base.OnActivityResult(requestCode, resultCode, data);
+
+            if (requestCode == 1)
+            {
+                GoogleSignInResult result = Auth.GoogleSignInApi.GetSignInResultFromIntent(data);
+                GoogleManager.Instance.OnAuthCompleted(result);
+            }
         }
     }
 }

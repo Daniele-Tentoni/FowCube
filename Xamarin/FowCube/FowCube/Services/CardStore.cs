@@ -52,16 +52,18 @@
             }
         }
 
-        public async Task<bool> AddItemAsync(Card item)
+        public async Task<string> AddItemAsync(Card item)
         {
             if(item != null || this.IsConnected)
             {
                 var serializedItem = JsonConvert.SerializeObject(item);
                 var response = await this.Client.PostAsync($"card", new StringContent(serializedItem, Encoding.UTF8, "application/json"));
-                return response.IsSuccessStatusCode;
+                if (response.IsSuccessStatusCode)
+                    return await response.Content.ReadAsStringAsync();
+                return string.Empty;
             }
 
-            return false;
+            return string.Empty;
         }
 
         public async Task<bool> DeleteItemAsync(string id)

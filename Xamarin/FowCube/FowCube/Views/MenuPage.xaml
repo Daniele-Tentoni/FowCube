@@ -7,43 +7,59 @@
              x:Class="FowCube.Views.MenuPage"
              Title="{Binding Title}">
 
-    <StackLayout VerticalOptions="FillAndExpand">
-        <ListView x:Name="ListViewMenu"
-                  ItemsSource="{Binding MenuItems}"
-                  VerticalOptions="FillAndExpand"
-                  HasUnevenRows="True"
-                  RefreshCommand="{Binding LoadMenuItemsCommand}"
-                  IsPullToRefreshEnabled="True"
-                  IsRefreshing="{Binding IsBusy, Mode=OneWay}"
-                  CachingStrategy="RecycleElement">
-            <ListView.Header>
-                <Grid BackgroundColor="#03A9F4">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="10" />
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="10" />
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="30" />
-                        <RowDefinition Height="80" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="10" />
-                    </Grid.RowDefinitions>
-                    <!-- Queste prime righe sono per l'intestazione. -->
-                    <Label Grid.Column="1" Grid.Row="1" 
+    <StackLayout VerticalOptions="Start">
+        <Grid BackgroundColor="#03A9F4">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="10" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="10" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="30" />
+                <RowDefinition Height="80" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="10" />
+            </Grid.RowDefinitions>
+            <!-- Queste prime righe sono per l'intestazione. -->
+            <Label Grid.Column="1" Grid.Row="1" 
                                    Text="Fow Cube" 
                                    BackgroundColor="#03A9F4" TextColor="Black" FontSize="40"
                                    HorizontalTextAlignment="Center" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand" />
-                    <Label Grid.Column="1" Grid.Row="2" 
-                                   Text="Username"
+            <Label Grid.Column="1" Grid.Row="2" 
+                                   Text="{Binding DisplayName}"
                                    HorizontalOptions="CenterAndExpand" VerticalOptions="Fill"/>
-                </Grid>
+        </Grid>
+        <ListView x:Name="CollectionsViewMenu"
+                  ItemsSource="{Binding CollectionsMenuItems}"
+                  VerticalOptions="FillAndExpand"
+                  HasUnevenRows="True" >
+            <ListView.Header>
+                <StackLayout VerticalOptions="Fill">
+                    <Label Text="Collections" FontSize="Small" />
+                </StackLayout>
             </ListView.Header>
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <ViewCell>
                         <Grid Padding="10">
-                            <Label Text="{Binding Title}" d:Text="{Binding .}" FontSize="Medium"/>
+                            <Label Text="{Binding Title}" d:Text="{Binding .}" FontSize="Medium" />
+                        </Grid>
+                    </ViewCell>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+        <BoxView HorizontalOptions="Center"
+                 HeightRequest="1" WidthRequest="100" Color="#5b5d68" />
+        <ListView x:Name="ListViewMenu"
+                  ItemsSource="{Binding MenuItems}"
+                  VerticalOptions="FillAndExpand"
+                  HasUnevenRows="True"
+                  CachingStrategy="RecycleElement">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <ViewCell>
+                        <Grid Padding="10">
+                            <Label Text="{Binding Title}" d:Text="{Binding .}" FontSize="Medium" />
                         </Grid>
                     </ViewCell>
                 </DataTemplate>

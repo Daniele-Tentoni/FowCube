@@ -28,12 +28,20 @@
             this.EditCardCommand = new Command(async (e) => await this.ExecuteEditCardCommand(e as Card));
             this.DeleteCardCommand = new Command(async (e) => await this.ExecuteDeleteCardCommand(e as Card));
 
+            // Each message subscription require to be unsubsribed before be subscribed again.
+            MessagingCenter.Unsubscribe<AddCardToCollectionViewModel, Card>(this, "AddItem");
             MessagingCenter.Subscribe<AddCardToCollectionViewModel, Card>(this, "AddItem", async (obj, item) =>
             {
                 var newItem = item as Card;
                 var res = await this.CardStore.AddItemAsync(newItem);
+                if(!string.IsNullOrEmpty(res))
+                {
+                    var added = await this.CollectionsStore.AddCardToCollection(this.SelectedCollection.Id, new Card { Id = res });
+                    if (added) await Task.Run(() => this.ExecuteLoadCardsCommand());
+                }
             });
 
+            MessagingCenter.Unsubscribe<AddCardToCollectionViewModel, Card>(this, "AddCardToCollection");
             MessagingCenter.Subscribe<AddCardToCollectionViewModel, Card>(this, "AddCardToCollection", async (obj, item) =>
             {
                 var cardIn = item as Card;

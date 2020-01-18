@@ -88,13 +88,17 @@
         /// <returns>Nothing.</returns>
         public async Task ExecuteSelectedCardCommand(bool newCard)
         {
-            // Add a card to the database before add that to collections.
             if (newCard)
             {
+                // If it's a new card, I'll add it to the database before.
                 MessagingCenter.Send(this, "AddItem", new Card { Name = Name, Description = Description });
             }
+            else
+            {
+                // If it's an old card, I'll add it to collection instead.
+                MessagingCenter.Send(this, "AddCardToCollection", this.SelectedCard);
+            }
 
-            MessagingCenter.Send(this, "AddCardToCollection", this.SelectedCard);
             await Application.Current.MainPage.Navigation.PopModalAsync();
         }
     }

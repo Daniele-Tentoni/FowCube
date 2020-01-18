@@ -9,8 +9,8 @@
         /// Add the new <paramref name="item"/> of type <typeparamref name="T"/> to the DataStore.
         /// </summary>
         /// <param name="item">Item to add to the DataStore.</param>
-        /// <returns>True if the item was added correctly.</returns>
-        Task<bool> AddItemAsync(T item);
+        /// <returns>Return the Id of the added item.</returns>
+        Task<string> AddItemAsync(T item);
         Task<bool> UpdateItemAsync(T item);
         /// <summary>
         /// Delete the <paramref name="id"/> item.

@@ -11,7 +11,9 @@
             <Entry x:Name="EmailEntry" d:Text="Email" Text="1@1.com" FontSize="Small" />
             <Label Text="Password" FontSize="Medium" />
             <Entry IsPassword="True" x:Name="PasswordEntry" d:Text="Password" Text="123456" FontSize="Small" Margin="0" />
-            <Button x:Name="LoginButton" Text="Login"/>
+            <Button x:Name="LoginButton" Text="Login" />
+            <BoxView VerticalOptions="Center" HorizontalOptions="Center" HeightRequest="1" WidthRequest="100" Color="#5b5d68" />
+            <Button x:Name="GoogleLoginButton" Text="Google Login" />
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

@@ -25,34 +25,37 @@
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <ViewCell>
-                        <Grid x:Name="CardItem" Padding="10">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                            </Grid.RowDefinitions>
+                        <Grid x:Name="CardItem" Padding="5">
                             <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="4*" />
                                 <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
 
-                            <Label Text="{Binding Name}" d:Text="{Binding .}"
+                            <StackLayout Padding="4" Spacing="4" Orientation="Vertical" Grid.Column="0">
+                                
+                                <Label Text="{Binding Name}" d:Text="{Binding .}"
                                 LineBreakMode="TailTruncation" Style="{DynamicResource ListItemTextStyle}" 
-                                FontSize="Medium"  Grid.Column="0" Grid.Row="0" />
-                            
-                            <Label Text="{Binding Description}" d:Text="Item descripton"
-                                LineBreakMode="TailTruncation" Style="{DynamicResource ListItemDetailTextStyle}"
-                                FontSize="Small"  Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="1"/>
+                                FontSize="Medium" />
 
-                            <Button Text="-" Grid.Column="1" Grid.Row="0" 
+                                <Label Text="{Binding Description}" d:Text="Item descripton"
+                                LineBreakMode="TailTruncation" Style="{DynamicResource ListItemDetailTextStyle}"
+                                FontSize="Small" />
+
+                            </StackLayout>
+
+                            <StackLayout Padding="4" Spacing="4" Orientation="Horizontal" Grid.Column="1">
+                                
+                                <Button Text="-"
                                     BindingContext="{Binding Source={x:Reference CardsListView}, Path=BindingContext}" 
                                     Command="{Binding DeleteCardCommand}" 
                                     CommandParameter="{Binding Source={x:Reference CardItem}, Path=BindingContext}"/>
 
-                            <Button Text="/" Grid.Column="2" Grid.Row="0"
+                                <!--<Button Text="/" WidthRequest="15" 
                                     BindingContext="{Binding Source={x:Reference CardsListView}, Path=BindingContext}" 
                                     Command="{Binding EditCardCommand}" 
-                                    CommandParameter="{Binding Source={x:Reference CardItem}, Path=BindingContext}"/>
+                                    CommandParameter="{Binding Source={x:Reference CardItem}, Path=BindingContext}"/>-->
+
+                            </StackLayout>
                         </Grid>
                     </ViewCell>
                 </DataTemplate>
