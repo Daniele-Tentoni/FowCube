@@ -27,8 +27,8 @@
                     <ViewCell>
                         <Grid x:Name="CardItem" Padding="5">
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="4*" />
                                 <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
 
                             <StackLayout Padding="4" Spacing="4" Orientation="Vertical" Grid.Column="0">
@@ -44,16 +44,11 @@
                             </StackLayout>
 
                             <StackLayout Padding="4" Spacing="4" Orientation="Horizontal" Grid.Column="1">
-                                
+
                                 <Button Text="-"
                                     BindingContext="{Binding Source={x:Reference CardsListView}, Path=BindingContext}" 
                                     Command="{Binding DeleteCardCommand}" 
                                     CommandParameter="{Binding Source={x:Reference CardItem}, Path=BindingContext}"/>
-
-                                <!--<Button Text="/" WidthRequest="15" 
-                                    BindingContext="{Binding Source={x:Reference CardsListView}, Path=BindingContext}" 
-                                    Command="{Binding EditCardCommand}" 
-                                    CommandParameter="{Binding Source={x:Reference CardItem}, Path=BindingContext}"/>-->
 
                             </StackLayout>
                         </Grid>

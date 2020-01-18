@@ -10,12 +10,15 @@
     using FowCube.Models;
     using FowCube.Services;
     using FowCube.Authentication;
+    using Xamarin.Essentials;
 
     public class BaseViewModel : INotifyPropertyChanged
     {
         public IAuth AuthInfo => DependencyService.Get<IAuth>();
         public IDataStore<Card> CardStore => DependencyService.Get<IDataStore<Card>>() ?? new CardStore();
         public CollectionStore CollectionsStore => new CollectionStore();
+        public string DisplayName => SecureStorage.GetAsync("display_name").Result;
+        public string UserId => SecureStorage.GetAsync("user_id").Result;
 
         bool isBusy = false;
         public bool IsBusy

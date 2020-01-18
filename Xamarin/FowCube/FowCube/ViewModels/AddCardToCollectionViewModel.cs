@@ -1,6 +1,7 @@
 ﻿namespace FowCube.ViewModels
 {
     using FowCube.Models;
+    using FowCube.Models.Collection;
     using System;
     using System.Collections.ObjectModel;
     using System.Diagnostics;
@@ -14,6 +15,8 @@
         /// The local card collection.
         /// </summary>
         public ObservableCollection<Card> Cards { get; set; }
+
+        public Collection SelectedCollection { get; set; }
 
         /// <summary>
         /// Load locally the cards.
@@ -40,10 +43,11 @@
 
         public string Description { get; set; }
 
-        public AddCardToCollectionViewModel(string collection)
+        public AddCardToCollectionViewModel(Collection selected)
         {
+            this.SelectedCollection = selected;
             // Change the title accordly to the collection I want to modify.
-            this.Title = $"Add Card to {collection}";
+            this.Title = $"Add Card to {this.SelectedCollection.Name}";
             this.SelectedCard = new Card();
             this.Cards = new ObservableCollection<Card>();
 
@@ -91,12 +95,12 @@
             if (newCard)
             {
                 // If it's a new card, I'll add it to the database before.
-                MessagingCenter.Send(this, "AddItem", new Card { Name = Name, Description = Description });
+                MessagingCenter.Send(this, $"CreateCardTo{this.SelectedCollection.Id}", new Card { Name = Name, Description = Description });
             }
             else
             {
                 // If it's an old card, I'll add it to collection instead.
-                MessagingCenter.Send(this, "AddCardToCollection", this.SelectedCard);
+                MessagingCenter.Send(this, $"AddCardTo{this.SelectedCollection.Id}", this.SelectedCard);
             }
 
             await Application.Current.MainPage.Navigation.PopModalAsync();

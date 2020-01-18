@@ -28,7 +28,7 @@
                 return;
 
             // Go to the card detail page.
-            await this.Navigation.PushAsync(new ItemDetailPage(new ItemDetailViewModel(item)));
+            await this.Navigation.PushAsync(new NavigationPage(new ItemDetailPage(new ItemDetailViewModel(item))));
 
             // Manually deselect item.
             this.CardsListView.SelectedItem = null;

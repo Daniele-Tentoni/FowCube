@@ -31,7 +31,7 @@
         </Grid>
         <ListView x:Name="CollectionsViewMenu"
                   ItemsSource="{Binding CollectionsMenuItems}"
-                  VerticalOptions="FillAndExpand"
+                  VerticalOptions="Fill"
                   HasUnevenRows="True" >
             <ListView.Header>
                 <StackLayout VerticalOptions="Fill">
@@ -48,11 +48,10 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
-        <BoxView HorizontalOptions="Center"
-                 HeightRequest="1" WidthRequest="100" Color="#5b5d68" />
+        <BoxView HeightRequest="1" WidthRequest="100" Color="#5b5d68" />
         <ListView x:Name="ListViewMenu"
                   ItemsSource="{Binding MenuItems}"
-                  VerticalOptions="FillAndExpand"
+                  VerticalOptions="Fill"
                   HasUnevenRows="True"
                   CachingStrategy="RecycleElement">
             <ListView.ItemTemplate>

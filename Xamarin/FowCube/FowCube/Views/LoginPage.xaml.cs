@@ -46,7 +46,7 @@
         {
             if (user != null)
             {
-                SecureStorage.SetAsync("display_name", string.IsNullOrEmpty(user.Username) ? "null" : user.Username);
+                SecureStorage.SetAsync("display_name", string.IsNullOrEmpty(user.DisplayName) ? "null" : user.DisplayName);
                 SecureStorage.SetAsync("user_id", string.IsNullOrEmpty(user.Id) ? "null" : user.Id);
                 SecureStorage.SetAsync("email", user.Email);
                 Device.BeginInvokeOnMainThread(() =>

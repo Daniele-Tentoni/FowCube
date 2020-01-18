@@ -29,6 +29,7 @@ namespace FowCube.Droid.Implementations
                 {
                     Id = user.User.Uid,
                     Username = user.AdditionalUserInfo.Username,
+                    DisplayName = user.User.DisplayName,
                     Email = user.User.Email,
                     Picture = new Uri((user.User.PhotoUrl != null ? $"{ user.User.PhotoUrl}" : $"https://autisticdating.net/imgs/profile-placeholder.jpg"))
                 };
@@ -53,6 +54,11 @@ namespace FowCube.Droid.Implementations
             return string.Empty;
         }
 
-        public string GetAuthenticatedDisplayName() => FirebaseAuth.Instance.CurrentUser.DisplayName;
+        public string GetAuthenticatedDisplayName()
+        {
+            if (FirebaseAuth.Instance != null && FirebaseAuth.Instance.CurrentUser != null)
+                return FirebaseAuth.Instance.CurrentUser.DisplayName;
+            return string.Empty;
+        }
     }
 }

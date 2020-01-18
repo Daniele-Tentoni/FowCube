@@ -18,7 +18,7 @@
         {
             this.InitializeComponent();
 
-            this.BindingContext = this.viewModel = new AddCardToCollectionViewModel(selected.Name);
+            this.BindingContext = this.viewModel = new AddCardToCollectionViewModel(selected);
         }
 
         protected override void OnAppearing()

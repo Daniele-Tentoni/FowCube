@@ -10,14 +10,11 @@
     using System.Linq;
     using System.Net.Http;
     using System.Threading.Tasks;
-    using Xamarin.Essentials;
     using Xamarin.Forms;
     using Xamarin.Forms.Internals;
 
     public class MenuPageViewModel : BaseViewModel
     {
-        public string DisplayName => SecureStorage.GetAsync("display_name").Result;
-        public string UserId => /*this.AuthInfo.GetAuthenticatedUid();*/ SecureStorage.GetAsync("user_id").Result;
         public ObservableCollection<HomeMenuItem> CollectionsMenuItems { get; set; }
         public ObservableCollection<HomeMenuItem> MenuItems { get; set; }
         public Command LoadMenuItemsCommand { get; set; }

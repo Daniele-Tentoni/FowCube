@@ -7,6 +7,9 @@
              x:Class="FowCube.Views.LoginPage">
     <ContentPage.Content>
         <StackLayout Spacing="20" Padding="15" VerticalOptions="Center">
+            <Label Grid.Column="1" Grid.Row="1"
+                   Text="Fow Cube"  TextColor="Black" FontSize="40"
+                   HorizontalTextAlignment="Center" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand" />
             <Label Text="Username" FontSize="Medium" />
             <Entry x:Name="EmailEntry" d:Text="Email" Text="1@1.com" FontSize="Small" />
             <Label Text="Password" FontSize="Medium" />

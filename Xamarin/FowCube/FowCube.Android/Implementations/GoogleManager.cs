@@ -5,7 +5,6 @@
     using Android.Gms.Common;
     using Android.Gms.Common.Apis;
     using Android.OS;
-    using Android.Util;
     using FowCube.Authentication;
     using FowCube.Models;
     using System;
@@ -21,7 +20,6 @@
         {
             Instance = this;
             var gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DefaultSignIn)
-                //.RequestIdToken("738002101933-6fk99vgvvrsth8fsret73bq9o5tfj0k7.apps.googleusercontent.com")
                 .RequestEmail().Build();
             GoogleApiClient = new GoogleApiClient.Builder(((MainActivity)Forms.Context).ApplicationContext)
                 .AddConnectionCallbacks(this)
@@ -43,13 +41,14 @@
         {
             if (result.IsSuccess)
             {
-                var accountt = result.SignInAccount;
+                var ac = result.SignInAccount;
                 this._onLoginComplete?.Invoke(new User
                 {
-                    Username = accountt.DisplayName,
-                    Id = accountt.Id,
-                    Email = accountt.Email,
-                    Picture = new Uri((accountt.PhotoUrl != null ? $"{accountt.PhotoUrl}" : $"https://autisticdating.net/imgs/profile-placeholder.jpg"))
+                    Id = ac.Id,
+                    Username = ac.GivenName,
+                    DisplayName = ac.DisplayName,
+                    Email = ac.Email,
+                    Picture = new Uri((ac.PhotoUrl != null ? $"{ac.PhotoUrl}" : $"https://autisticdating.net/imgs/profile-placeholder.jpg"))
                 }, string.Empty);
             }
             else
