@@ -43,50 +43,59 @@
     <body>
         <div class="demo-layout mdl-layout mdl-js-layout mdl-layout--fixed-header">
             <!-- Header section containing logo -->
-            <header class="mdl-layout__header mdl-color-text--white mdl-color--light-blue-700">
-                <div class="mdl-cell mdl-cell--12-col mdl-cell--12-col-tablet mdl-grid">
-                    <div class="mdl-layout__header-row mdl-cell mdl-cell--12-col mdl-cell--12-col-tablet mdl-cell--12-col-desktop">
-                        <h3><i class="material-icons">chat_bubble_outline</i> Fow Cube</h3>
-                    </div>
+            <header class="mdc-top-app-bar mdl-color-text--white mdl-color--light-blue-700">
+                <div class="mdc-top-app-bar__row">
+                    <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-start">
+                        <button class="material-icons mdc-top-app-bar__navigation-icon mdc-icon-button">menu</button>
+                        <span class="mdc-top-app-bar__title"> Fow Cube</span>
+                    </section>
+                </div>
+                <div class="mdc-top-app-bar__row">
                     <div id="user-container">
                         <div hidden id="user-pic"></div>
                         <div hidden id="user-name"></div>
-                        <button hidden id="sign-out" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-color-text--white">
-						Sign-out
-					</button>
-                        <button id="sign-in" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-color-text--white">
-						<i class="material-icons">account_circle</i>Sign-in with Google
-					</button>
-                    </div>
-                </div>
-            </header>
+                        <button hidden id="sign-out" class="mdc-button mdl-color-text--white">
+                            <span class="mdc-button__ripple"></span>
+                            <i class="material-icons mdc-button__icon" aria-hidden="true">Sign out</i>
+                            <span class="mdc-button__label">Sign-out</span>
+                        </button>
+                        <button id="sign-in" class="mdc-button mdl-color-text--white">
+                            <span class="mdc-button__ripple"></span>
+                            <i class="material-icons mdc-button__icon" aria-hidden="true">account_circle</i>
+                            <span class="mdc-button__label">Sign-in with Google</span>
+                        </button>
+                  </div>
+              </div>
+          </header>
 
-            <main class="mdl-layout__content mdl-color--grey-100">
-                <div id="cards-card-container" class="mdl-cell mdl-cell--12-col mdl-grid">
-                    <!-- Cards container -->
-                    <div id="cards-card" class="mdl-card mdl-shadow--2dp mdl-cell mdl-cell--12-col mdl-cell--6-col-tablet mdl-cell--6-col-desktop">
-                        <div class="mdl-card__supporting-text mdl-color-text--grey-600">
-                            <div id="cards">
-                            </div>
-                            <form id="card-form" action="#">
-                                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                                    <input class="mdl-textfield__input" type="text" id="card" autocomplete="off">
-                                    <label class="mdl-textfield__label" for="card">Card...</label>
-                                </div>
-                                <button id="submit" disabled type="submit" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect">
-					                Send
-					            </button>
-                            </form>
-                            <form id="image-form" action="#">
-                                <input id="mediaCapture" type="file" accept="image/*" capture="camera">
-                                <button id="submitImage" title="Add an image" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-color--amber-400 mdl-color-text--white">
-					                <i class="material-icons">image</i>
-					            </button>
-                            </form>
+          <main class="mdl-layout__content mdl-color--grey-100">
+            <div id="cards-card-container" class="mdl-cell mdl-cell--12-col mdl-grid">
+                <!-- Cards container -->
+                <div id="cards-card" class="mdl-card mdl-shadow--2dp mdl-cell mdl-cell--12-col mdl-cell--6-col-tablet mdl-cell--6-col-desktop">
+                    <div class="mdl-card__supporting-text mdl-color-text--grey-600">
+                        <div id="cards">
                         </div>
-                    </div>
-                </div>
-            </main>
+                        <form id="card-form" action="#">
+                            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                                <input class="mdl-textfield__input" type="text" id="card" autocomplete="off">
+                                <label class="mdl-textfield__label" for="card">Card...</label>
+                            </div>
+                            <button id="submit" disabled type="submit" class="mdc-button mdl-button--raised">
+                                <span class="mdc-button__ripple"></span>
+                                <i class="material-icons mdc-button__icon" aria-hidden="true">account_circle</i>
+                                <span class="mdc-button__label">Send</span>
+                           </button>
+                       </form>
+                       <form id="image-form" action="#">
+                        <input id="mediaCapture" type="file" accept="image/*" capture="camera">
+                        <button id="submitImage" title="Add an image" class="mdc-button mdl-button--raised mdl-color--amber-400 mdl-color-text--white">
+                           <i class="material-icons">image</i>
+                       </button>
+                   </form>
+               </div>
+           </div>
+       </div>
+   </main>
 
             <!--<main class="mdl-layout__content mdl-color--grey-100">
                 <div id="messages-card-container" class="mdl-cell mdl-cell--12-col mdl-grid">
@@ -113,4 +122,4 @@
         <script src="scripts/main.js"></script>
     </body>
 
-</html>
+    </html>

@@ -195,7 +195,7 @@ main, #messages-card {
 .mdl-textfield--floating-label.is-focused .mdl-textfield__label {
   color: #0288D1;
 }
-.mdl-button .material-icons {
+.material-icons {
   top: -1px;
   margin-right: 5px;
 }
