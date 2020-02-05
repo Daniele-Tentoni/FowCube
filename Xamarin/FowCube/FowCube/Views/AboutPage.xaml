@@ -34,7 +34,7 @@
         </StackLayout>
         <ScrollView Grid.Row="1">
             <StackLayout Orientation="Vertical" Padding="16,40,16,40" Spacing="10">
-                <Label FontSize="22">
+                <Label FontSize="Large">
                     <Label.FormattedText>
                         <FormattedString>
                             <FormattedString.Spans>
@@ -45,7 +45,32 @@
                         </FormattedString>
                     </Label.FormattedText>
                 </Label>
-                <Label>
+                <Label FontSize="Body">
+                    <Label.FormattedText>
+                        <FormattedString>
+                            <FormattedString.Spans>
+                                <Span Text="I'm made with love by a software engineer, Daniele Tentoni, located in Cesena, Italy." />
+                                <Span Text="I grow only in is free time, that's very low, specially during the exam time at his university: the Engineering and Computer Science Tecnoolgy of University of Bologna." />
+                                <Span Text="You can help him sending mails and feedback about me, about my error and my wish improvements." />
+                            </FormattedString.Spans>
+                        </FormattedString>
+                    </Label.FormattedText>
+                </Label>
+                <Label FontSize="Body">
+                    <Label.FormattedText>
+                        <FormattedString>
+                            <FormattedString.Spans>
+                                <Span Text="All marks and images of Fow ltd or Eye Spy's Production are property of respective owner's." />
+                                <Span Text="You can find my code on github following the button above." />
+                            </FormattedString.Spans>
+                        </FormattedString>
+                    </Label.FormattedText>
+                </Label>
+                <Button Margin="20,10,20,0" Text="Continue on Github"
+                        Command="{Binding OpenWebCommand}"
+                        BackgroundColor="{StaticResource Primary}"
+                        TextColor="White" />
+                <Label FontSize="Body">
                     <Label.FormattedText>
                         <FormattedString>
                             <FormattedString.Spans>
@@ -57,7 +82,7 @@
                         </FormattedString>
                     </Label.FormattedText>
                 </Label>
-                <Label>
+                <Label FontSize="Body">
                     <Label.FormattedText>
                         <FormattedString>
                             <FormattedString.Spans>
@@ -70,7 +95,7 @@
                         </FormattedString>
                     </Label.FormattedText>
                 </Label>
-                <Button Margin="0,10,0,0" Text="Learn more"
+                <Button Margin="20,10,20,0" Text="Learn more"
                         Command="{Binding OpenWebCommand}"
                         BackgroundColor="{StaticResource Primary}"
                         TextColor="White" />

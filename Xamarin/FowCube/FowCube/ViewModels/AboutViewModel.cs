@@ -12,7 +12,9 @@
             this.Title = "About";
         }
 
-        public ICommand OpenWebCommand { get; } = new Command(() => Launcher.OpenAsync(new Uri("https://xamarin.com/platform")));
+        public ICommand OpenXamarinCommand { get; } = new Command(() => Launcher.OpenAsync(new Uri("https://xamarin.com/platform")));
+
+        public ICommand OpenGitHubCommand { get; } = new Command(() => Launcher.OpenAsync(new Uri("https://github.com/Daniele-Tentoni/FowCube")));
 
         public string AppName => AppInfo.Name;
 
