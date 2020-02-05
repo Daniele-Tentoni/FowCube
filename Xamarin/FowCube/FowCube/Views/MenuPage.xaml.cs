@@ -1,7 +1,6 @@
 ﻿namespace FowCube.Views
 {
     using FowCube.Models;
-    using FowCube.Services;
     using FowCube.ViewModels;
     using System;
     using System.ComponentModel;

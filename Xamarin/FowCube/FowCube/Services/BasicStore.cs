@@ -17,14 +17,13 @@
             {
                 BaseAddress = new Uri($"{App.AzureBackendUrl}/{firstEndpoint}/")
             };
-            /*try
-            {
-                this.Client.DefaultRequestHeaders.Add("Accept", "application/json");
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.Message);
-            }*/
+            /*
+             * var authData = string.Format ("{0}:{1}", Constants.Username, Constants.Password);
+    var authHeaderValue = Convert.ToBase64String (Encoding.UTF8.GetBytes (authData));
+
+    _client = new HttpClient ();
+    _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue ("Basic", authHeaderValue);
+    */
         }
 
         /// <summary>

@@ -46,7 +46,7 @@
                 {
                     basicCollections = await this.CollectionsStore.GetAllUserCollectionsAsync(this.UserId);
                 }
-                catch (HttpRequestException ex)
+                catch (HttpRequestException)
                 {
                     var res = await this.CollectionsStore.CreateAsync("1", this.UserId);
                     if (res != null)
