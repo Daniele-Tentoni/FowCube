@@ -3,7 +3,6 @@
     using FowCube.Authentication;
     using FowCube.Models;
     using System;
-    using System.Threading.Tasks;
     using Xamarin.Essentials;
     using Xamarin.Forms;
     using Xamarin.Forms.Internals;
@@ -13,7 +12,6 @@
     public partial class LoginPage : ContentPage
     {
         private readonly IAuth auth;
-        private readonly IGoogleManager googleManager;
 
         public LoginPage()
         {
@@ -21,10 +19,9 @@
             this.LoginButton.Clicked += this.LoginClicked;
             this.GoogleLoginButton.Clicked += this.GoogleLoginButton_Clicked;
             this.auth = DependencyService.Get<IAuth>();
-            this.googleManager = DependencyService.Get<IGoogleManager>();
         }
 
-        private void GoogleLoginButton_Clicked(object sender, EventArgs e) => this.googleManager.Login(this.OnLoginComplete);
+        private void GoogleLoginButton_Clicked(object sender, EventArgs e) => this.auth.LoginWithGoogleAuth(this.OnLoginComplete);
 
         void LoginClicked(object sender, EventArgs e)
         {

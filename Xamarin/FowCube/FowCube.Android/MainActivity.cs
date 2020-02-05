@@ -8,9 +8,9 @@
     using Android.Gms.Auth.Api.SignIn;
     using Android.Gms.Common.Apis;
     using Xamarin.Forms;
+    using Android.Gms.Auth.Api;
     using FowCube.Authentication;
     using FowCube.Droid.Implementations;
-    using Android.Gms.Auth.Api;
 
     [Activity(Label = "FowCube", Icon = "@mipmap/icon", Theme = "@style/MainTheme", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
     public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity
@@ -29,10 +29,9 @@
             Xamarin.Essentials.Platform.Init(this, savedInstanceState);
             Forms.Init(this, savedInstanceState);
 
-            DependencyService.Register<IGoogleManager, GoogleManager>();
+            DependencyService.Register<IAuth, FireAuth>();
             this.app = FirebaseApp.InitializeApp(this.Application.ApplicationContext);
 
-            // Firebase.FirebaseApp.InitializeApp(this);
             this.LoadApplication(new App());
         }
 
@@ -50,7 +49,7 @@
             if (requestCode == 1)
             {
                 GoogleSignInResult result = Auth.GoogleSignInApi.GetSignInResultFromIntent(data);
-                GoogleManager.Instance.OnAuthCompleted(result);
+                FireAuth.Instance.OnAuthCompleted(result);
             }
         }
     }

@@ -50,7 +50,6 @@
             if(item.MenuType == MenuItemType.Logout)
             {
                 DependencyService.Get<IAuth>().Logout();
-                DependencyService.Get<IGoogleManager>().Logout();
                 Application.Current.MainPage = new LoginPage();
                 return;
             }

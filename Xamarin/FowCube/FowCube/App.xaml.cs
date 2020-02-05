@@ -4,7 +4,6 @@
     using Xamarin.Forms;
     using FowCube.Services;
     using FowCube.Views;
-    using FowCube.Authentication;
 
     public partial class App : Application
     {
@@ -27,6 +26,7 @@
         protected override void OnStart()
         {
             // Handle when your app starts.
+            // TODO: Manage mGoogleSignIn Connection.
         }
 
         protected override void OnSleep()
@@ -37,6 +37,7 @@
         protected override void OnResume()
         {
             // Handle when your app resumes.
+            // TODO: Manage mGoogleSignIn Disconnection.
         }
     }
 }

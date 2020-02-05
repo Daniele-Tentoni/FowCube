@@ -2,24 +2,17 @@
 {
     using FowCube.Models;
     using System;
-    using System.Threading.Tasks;
 
     public interface IAuth
     {
         /// <summary>
-        /// Return the User Identifier of Current User.
+        /// Return the User Authenticated.
         /// </summary>
-        /// <returns></returns>
-        string GetAuthenticatedUid();
+        /// <returns>Current firebase user.</returns>
+        User GetAuthenticatedUser();
 
         /// <summary>
-        /// Return the Display Name of Current User.
-        /// </summary>
-        /// <returns></returns>
-        string GetAuthenticatedDisplayName();
-
-        /// <summary>
-        /// Execute the login to firebase authentication provider.
+        /// Execute the login to firebase with email and password provider.
         /// </summary>
         /// <param name="email">User email.</param>
         /// <param name="password">User password.</param>
@@ -27,7 +20,13 @@
         void LoginWithEmailPasswordAsync(string email, string password, Action<User, string> onLoginComplete);
 
         /// <summary>
-        /// Execute the logout from firebase.
+        /// Execute the login to firebase with google auth provider.
+        /// </summary>
+        /// <param name="onLoginComplete">Callback when login is completed.</param>
+        void LoginWithGoogleAuth(Action<User, string> onLoginComplete);
+
+        /// <summary>
+        /// Execute the logout from all auth providers.
         /// </summary>
         void Logout();
     }

@@ -8,14 +8,18 @@
     <ContentPage.Content>
         <StackLayout Spacing="20" Padding="15" VerticalOptions="Center">
             <Label Grid.Column="1" Grid.Row="1"
-                   Text="Fow Cube"  TextColor="Black" FontSize="40"
+                   Text="Fow Cube"  TextColor="Black" FontSize="Title"
+                   HorizontalTextAlignment="Center" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand" />
+            <Label Grid.Column="1" Grid.Row="1"
+                   Text="Made with love by Daniele Tentoni, @2020"  TextColor="Black" FontSize="Subtitle"
                    HorizontalTextAlignment="Center" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand" />
             <Label Text="Username" FontSize="Medium" />
-            <Entry x:Name="EmailEntry" d:Text="Email" Text="1@1.com" FontSize="Small" />
+            <Entry x:Name="EmailEntry" d:Text="Email" FontSize="Small" />
             <Label Text="Password" FontSize="Medium" />
-            <Entry IsPassword="True" x:Name="PasswordEntry" d:Text="Password" Text="123456" FontSize="Small" Margin="0" />
+            <Entry IsPassword="True" x:Name="PasswordEntry" d:Text="Password" FontSize="Small" Margin="0" />
             <Button x:Name="LoginButton" Text="Login" />
             <BoxView VerticalOptions="Center" HorizontalOptions="Center" HeightRequest="1" WidthRequest="100" Color="#5b5d68" />
+            <Label Text="Or use following providers" HorizontalOptions="Center" FontSize="Medium" />
             <Button x:Name="GoogleLoginButton" Text="Google Login" />
         </StackLayout>
     </ContentPage.Content>

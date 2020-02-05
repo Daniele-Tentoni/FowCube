@@ -13,6 +13,7 @@
   <ItemGroup>
     <Compile Remove="Services\ICardService.cs" />
     <Compile Remove="Services\MockDataStore.cs" />
+    <Compile Remove="Authentication\IGoogleManager.cs" />
   </ItemGroup>
 
   <ItemGroup>
