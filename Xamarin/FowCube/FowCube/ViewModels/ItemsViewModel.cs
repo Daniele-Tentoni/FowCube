@@ -1,6 +1,6 @@
 ﻿namespace FowCube.ViewModels
 {
-    using FowCube.Models;
+    using FowCube.Models.Cards;
     using System.Collections.ObjectModel;
     using Xamarin.Forms;
     using System.Threading.Tasks;

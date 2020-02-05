@@ -1,6 +1,6 @@
 ﻿namespace FowCube.ViewModels
 {
-    using FowCube.Models;
+    using FowCube.Models.Cards;
 
     public class ItemDetailViewModel : BaseViewModel
     {

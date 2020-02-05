@@ -7,7 +7,7 @@
 
     using Xamarin.Forms;
 
-    using FowCube.Models;
+    using FowCube.Models.Cards;
     using FowCube.Services;
     using FowCube.Authentication;
     using Xamarin.Essentials;

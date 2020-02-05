@@ -6,7 +6,7 @@
     using System.Net.Http;
     using System.Text;
     using System.Threading.Tasks;
-    using FowCube.Models;
+    using FowCube.Models.Cards;
     using FowCube.Models.Collection;
     using Newtonsoft.Json;
 

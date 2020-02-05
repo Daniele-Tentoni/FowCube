@@ -4,7 +4,7 @@
     using System.ComponentModel;
     using Xamarin.Forms;
 
-    using FowCube.Models;
+    using FowCube.Models.Cards;
     using FowCube.ViewModels;
 
     // Learn more about making custom code visible in the Xamarin.Forms previewer

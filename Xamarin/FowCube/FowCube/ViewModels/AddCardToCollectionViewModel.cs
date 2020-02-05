@@ -1,6 +1,6 @@
 ﻿namespace FowCube.ViewModels
 {
-    using FowCube.Models;
+    using FowCube.Models.Cards;
     using FowCube.Models.Collection;
     using System;
     using System.Collections.ObjectModel;
