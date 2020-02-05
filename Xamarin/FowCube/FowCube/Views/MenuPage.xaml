@@ -45,7 +45,7 @@
                   ItemsSource="{Binding CollectionsMenuItems}"
                   HasUnevenRows="True" >
             <ListView.Header>
-                <StackLayout VerticalOptions="Fill">
+                <StackLayout Padding="0,10,0,10" VerticalOptions="Fill">
                     <Label Text="Your Collections" FontSize="Medium" HorizontalOptions="CenterAndExpand" FontAttributes="Bold" />
                 </StackLayout>
             </ListView.Header>

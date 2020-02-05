@@ -14,11 +14,20 @@
     
     <ContentPage.Content>
         <StackLayout Spacing="10" Padding="5">
-            <Label Text="Text" FontSize="Medium" />
-            <Entry Text="{Binding Name}" d:Text="Card name" FontSize="Small" />
-            <Label Text="Description" FontSize="Medium" />
-            <Editor Text="{Binding Description}" d:Text="Card description" FontSize="Small" Margin="0" />
-            <Label Text="Test to add an old card to the collection." />
+            <Label FontSize="Large">
+                    <Label.FormattedText>
+                        <FormattedString>
+                            <FormattedString.Spans>
+                                <Span Text="From here you can add cards to your collection."/>
+                                <Span Text="You can prompt all data in the following form or tap on a card in the list." />
+                                <Span Text="If you help the developer by create some missing cards on the server, the developer we'll be very graceful to you!!!" />
+                            </FormattedString.Spans>
+                        </FormattedString>
+                    </Label.FormattedText>
+                </Label>
+            <Label Text="" />
+            <Entry Text="{Binding Name}" Placeholder="Card Name" FontSize="Body" />
+            <Editor Text="{Binding Description}" Placeholder="Card Ability Text" FontSize="Body" Margin="0" />
 
             <ListView x:Name="CardsListView" ItemsSource="{Binding Cards}"
                       VerticalOptions="FillAndExpand" HasUnevenRows="true"
@@ -29,14 +38,20 @@
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <ViewCell>
-                            <StackLayout Padding="5">
-                                <Label Text="{Binding Name}" d:Text="{Binding .}"
-                                LineBreakMode="TailTruncation" Style="{DynamicResource ListItemTextStyle}" 
-                                FontSize="Medium" />
+                            <StackLayout Orientation="Horizontal">
 
-                                <Label Text="{Binding Description}" d:Text="Item descripton"
-                                LineBreakMode="TailTruncation" Style="{DynamicResource ListItemDetailTextStyle}"
-                                FontSize="Small" />
+                                <Image MinimumWidthRequest="64" MinimumHeightRequest="64" Grid.Column="0" Margin="4" />
+
+                                <StackLayout Padding="5">
+                                    <Label Text="{Binding Name}" d:Text="{Binding .}"
+                                    LineBreakMode="TailTruncation" Style="{DynamicResource ListItemTextStyle}" 
+                                    FontSize="Title" />
+
+                                    <!--<Label Text="{Binding Description}" d:Text="Item descripton"
+                                    LineBreakMode="TailTruncation" Style="{DynamicResource ListItemDetailTextStyle}"
+                                    FontSize="Small" />-->
+                                </StackLayout>
+
                             </StackLayout>
                         </ViewCell>
                     </DataTemplate>

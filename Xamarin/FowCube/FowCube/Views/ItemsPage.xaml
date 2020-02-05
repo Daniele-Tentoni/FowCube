@@ -27,23 +27,26 @@
                     <ViewCell>
                         <Grid x:Name="CardItem" Padding="5">
                             <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
 
-                            <StackLayout Padding="4" Spacing="4" Orientation="Vertical" Grid.Column="0">
+                            <Image MinimumWidthRequest="64" MinimumHeightRequest="64" Grid.Column="0" Margin="4" />
+
+                            <StackLayout Padding="4" Spacing="4" Orientation="Vertical" Grid.Column="1">
                                 
                                 <Label Text="{Binding Name}" d:Text="{Binding .}"
                                 LineBreakMode="TailTruncation" Style="{DynamicResource ListItemTextStyle}" 
-                                FontSize="Medium" />
+                                FontSize="Title" />
 
                                 <Label Text="{Binding Description}" d:Text="Item descripton"
                                 LineBreakMode="TailTruncation" Style="{DynamicResource ListItemDetailTextStyle}"
-                                FontSize="Small" />
+                                FontSize="Subtitle" />
 
                             </StackLayout>
 
-                            <StackLayout Padding="4" Spacing="4" Orientation="Horizontal" Grid.Column="1">
+                            <StackLayout Padding="4" Spacing="4" Orientation="Horizontal" Grid.Column="2">
 
                                 <Button Text="-"
                                     BindingContext="{Binding Source={x:Reference CardsListView}, Path=BindingContext}" 

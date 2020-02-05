@@ -105,7 +105,7 @@
         /// <returns>Card.</returns>
         public async Task<Card> GetItemAsync(string id)
         {
-            var card = Realm.All<Card>().SingleOrDefault(s => s.Id == id);
+            var card = Realm.Find<Card>(id); // This is more speed.
             if (card != null) return card;
 
             if (id != null && this.IsConnected)
@@ -127,7 +127,9 @@
             if (forceRefresh && this.IsConnected)
             {
                 var json = await this.Client.GetStringAsync($"card");
-                return await Task.Run(() => JsonConvert.DeserializeObject<IEnumerable<Card>>(json));
+                var cards = await Task.Run(() => JsonConvert.DeserializeObject<IEnumerable<Card>>(json));
+                Realm.Write(() => cards.ToList().ForEach(elem => Realm.Add(elem, true)));
+                return cards;
             }
             else
             {
