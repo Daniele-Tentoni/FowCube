@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    x:Class="FowCube.Views.UserViews.UserPage">
+    <ContentPage.Content>
+        <Grid BackgroundColor="White">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <!-- User image -->
+            <Image Grid.Row="0" VerticalOptions="Start" />
+
+            <!-- 2. Contact informaqtion frame-->   
+            <StackLayout Grid.Row="0" BackgroundColor="White" VerticalOptions="End">
+                 <Frame CornerRadius="40" Style="{StaticResource stlMainFrame}">
+                    <!-- Here add the code that is being explained in the next block-->
+                </Frame>     
+            </StackLayout>
+        </Grid>
+    </ContentPage.Content>
+</ContentPage>

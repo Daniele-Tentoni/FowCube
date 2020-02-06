@@ -8,6 +8,15 @@
              Title="{Binding Title}"
              x:Name="BrowseItemsPage">
 
+    <ContentPage.Resources>
+        <Style x:Key="circleButton" TargetType="Button">
+            <Setter Property="BackgroundColor" Value="PaleVioletRed" />
+            <Setter Property="WidthRequest" Value="40" />
+            <Setter Property="HeightRequest" Value="40" />
+            <Setter Property="CornerRadius" Value="30" />
+        </Style>
+    </ContentPage.Resources>
+
     <ContentPage.ToolbarItems>
         <ToolbarItem Text="+" Clicked="AddItem_Clicked" />
     </ContentPage.ToolbarItems>
@@ -45,15 +54,10 @@
                                 FontSize="Subtitle" />
 
                             </StackLayout>
-
-                            <StackLayout Padding="4" Spacing="4" Orientation="Horizontal" Grid.Column="2">
-
-                                <Button Text="-"
-                                    BindingContext="{Binding Source={x:Reference CardsListView}, Path=BindingContext}" 
-                                    Command="{Binding DeleteCardCommand}" 
-                                    CommandParameter="{Binding Source={x:Reference CardItem}, Path=BindingContext}"/>
-
-                            </StackLayout>
+                            <Button Text="-" Style="{StaticResource circleButton}" Grid.Column="2" Margin="4"
+                                BindingContext="{Binding Source={x:Reference CardsListView}, Path=BindingContext}" 
+                                Command="{Binding DeleteCardCommand}" 
+                                CommandParameter="{Binding Source={x:Reference CardItem}, Path=BindingContext}"/>
                         </Grid>
                     </ViewCell>
                 </DataTemplate>
