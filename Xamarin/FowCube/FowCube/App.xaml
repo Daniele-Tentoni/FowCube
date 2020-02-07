@@ -15,8 +15,8 @@
                 <Setter Property="BarTextColor" Value="White" />
             </Style>
             <Style x:Key="stlMainFrame" TargetType="Frame">
-                <Setter Property="TranslationY" Value="{OnPlatform iOS='-150', Android='-33'}"/> 
-                <Setter Property="HeightRequest" Value="{OnPlatform iOS='120', Android='228'}"/>
+                <Setter Property="BackgroundColor" Value="AntiqueWhite" />
+                <Setter Property="CornerRadius" Value="5" />
                 <Setter Property="HasShadow" Value="False" />
             </Style>
             <Style x:Key="faLabelStyle" TargetType="Label">
@@ -25,11 +25,15 @@
                     Android='fa-regular-400.ttf#Font Awesome 5 Free Regular'
                     }" />
             </Style>
+            <Style x:Key="faMenuLabelStyle" TargetType="Label" BasedOn="{StaticResource faLabelStyle}">
+                <Setter Property="FontSize" Value="Body" />
+            </Style>
             <Style x:Key="faButtonStyle" TargetType="Button">
                 <Setter Property="FontFamily" Value="{
                     OnPlatform iOS='Font Awesome 5 Free',
                     Android='fa-regular-400.ttf#Font Awesome 5 Free Regular'
                     }" />
+                <Setter Property="CornerRadius" Value="5" />
             </Style>
         </ResourceDictionary>
     </Application.Resources>

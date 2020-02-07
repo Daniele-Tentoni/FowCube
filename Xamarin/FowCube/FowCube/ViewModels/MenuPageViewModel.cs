@@ -1,13 +1,13 @@
 ﻿namespace FowCube.ViewModels
 {
-    using FowCube.Models;
     using FowCube.Models.Collection;
+    using FowCube.Models.HomeMenuItems;
+    using FowCube.Utils;
     using FowCube.Views;
     using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.Diagnostics;
-    using System.Linq;
     using System.Net.Http;
     using System.Threading.Tasks;
     using Xamarin.Forms;
@@ -15,15 +15,13 @@
 
     public class MenuPageViewModel : BaseViewModel
     {
-        public ObservableCollection<HomeMenuItem> CollectionsMenuItems { get; set; }
-        public ObservableCollection<HomeMenuItem> MenuItems { get; set; }
+        public ObservableCollection<HomeMenuItemsGroup> MenuItems { get; set; }
         public Command LoadMenuItemsCommand { get; set; }
 
         public MenuPageViewModel()
         {
-            this.Title = "About";
-            this.CollectionsMenuItems = new ObservableCollection<HomeMenuItem>();
-            this.MenuItems = new ObservableCollection<HomeMenuItem>();
+            this.Title = "Menu";
+            this.MenuItems = new ObservableCollection<HomeMenuItemsGroup>();
             this.LoadMenuItemsCommand = new Command(async () => await this.ExecuteLoadCollectionsCommand());
         }
 
@@ -31,49 +29,72 @@
         {
             if (this.IsBusy) return;
             this.IsBusy = true;
-            this.CollectionsMenuItems.Clear();
             this.MenuItems.Clear();
 
             try
             {
                 int id = 0;
-                this.MenuItems.Add(new HomeMenuItem { Id = id++, MenuType = MenuItemType.Settings, Title = "Settings" });
-                this.MenuItems.Add(new HomeMenuItem { Id = id++, MenuType = MenuItemType.About, Title = "About" });
-                this.MenuItems.Add(new HomeMenuItem { Id = id++, MenuType = MenuItemType.Logout, Title = "Logout" });
 
-                var basicCollections = new List<BasicCollection>();
+                var basicCollections = new List<Collection>();
                 try
                 {
-                    basicCollections = await this.CollectionsStore.GetAllUserCollectionsAsync(this.UserId);
+                    basicCollections = await this.CollectionsStore.GetAllUserCollectionsAsync(this.UserId, true);
                 }
                 catch (HttpRequestException)
                 {
-                    var res = await this.CollectionsStore.CreateAsync("1", this.UserId);
+                    var res = await this.CollectionsStore.CreateCollectionAsync("1", this.UserId);
                     if (res != null)
                     {
-                        basicCollections = await this.CollectionsStore.GetAllUserCollectionsAsync(this.UserId);
+                        basicCollections = await this.CollectionsStore.GetAllUserCollectionsAsync(this.UserId, true);
                     }
+                }
+                catch (Exception e)
+                {
+                    Log.Warning("LOAD_COLLECTIONS", $"Exception thrown: {e.Message}");
                 }
 
-                if(basicCollections.Count == 0)
+                if (basicCollections.Count == 0)
                 {
-                    var res = await this.CollectionsStore.CreateAsync("1", this.UserId);
+                    var res = await this.CollectionsStore.CreateCollectionAsync("1", this.UserId);
                     if (res != null)
                     {
-                        basicCollections = await this.CollectionsStore.GetAllUserCollectionsAsync(this.UserId);
+                        basicCollections = await this.CollectionsStore.GetAllUserCollectionsAsync(this.UserId, true);
                     }
                 }
+                var collectionMenuItems = new HomeMenuItemsGroup("Collection", "Collection view");
                 basicCollections.ForEach(collection =>
                 {
-                    this.CollectionsMenuItems.Add(new HomeMenuItem { Id = id++, MenuType = MenuItemType.Browse, Title = collection.Name, Arg = collection.Id });
+                    collectionMenuItems.Add(new HomeMenuItem
+                    {
+                        Id = id++,
+                        MenuType = MenuItemType.Browse,
+                        Title = this.GenerateMenuItemTitle(FontAwesomeIcons.FolderOpen, collection.Name),
+                        Arg = collection.Id
+                    });
                 });
 
                 if (basicCollections.Count > 0)
                 {
                     // After this operation I exit, so I have to set IsBusy at false at the moment.
                     this.IsBusy = false;
-                    await this.ExecuteMenuSelectionCommand(this.CollectionsMenuItems.First());
+                    // await this.ExecuteMenuSelectionCommand(this.CollectionsMenuItems.First());
                 }
+                this.MenuItems.Add(collectionMenuItems);
+                this.MenuItems.Add(new HomeMenuItemsGroup("Settings", "Settings") {
+                    new HomeMenuItem {
+                        Id = id++,
+                        MenuType = MenuItemType.Settings,
+                        Title = this.GenerateMenuItemTitle(FontAwesomeIcons.FileAlt, "Settings")
+                    }, new HomeMenuItem {
+                        Id = id++,
+                        MenuType = MenuItemType.About,
+                        Title = this.GenerateMenuItemTitle(FontAwesomeIcons.MapMarkerQuestion, "About")
+                    }, new HomeMenuItem {
+                        Id = id++,
+                        MenuType = MenuItemType.Logout,
+                        Title = this.GenerateMenuItemTitle(FontAwesomeIcons.TimesCircle, "Logout")
+                    }
+                });
             }
             catch (Exception ex)
             {
@@ -85,6 +106,8 @@
                 this.IsBusy = false;
             }
         }
+
+        private string GenerateMenuItemTitle(string icon, string title) => icon + " " + title;
 
         public async Task ExecuteMenuSelectionCommand(HomeMenuItem menuItem)
         {

@@ -1,4 +1,4 @@
-﻿namespace FowCube.Models
+﻿namespace FowCube.Models.HomeMenuItems
 {
     public enum MenuItemType
     {

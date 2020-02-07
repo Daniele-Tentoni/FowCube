@@ -1,6 +1,6 @@
 ﻿namespace FowCube.Views
 {
-    using FowCube.Models;
+    using FowCube.Models.HomeMenuItems;
     using FowCube.ViewModels;
     using System;
     using System.ComponentModel;
@@ -28,8 +28,6 @@
 
             // this.ListViewMenu.SelectedItem = this.viewModel.MenuItems[0];
             this.ListViewMenu.ItemSelected += this.ViewMenu_ItemSelected;
-
-            this.CollectionsViewMenu.ItemSelected += this.ViewMenu_ItemSelected;
         }
 
         private async void ViewMenu_ItemSelected(object sender, SelectedItemChangedEventArgs e)
@@ -42,7 +40,7 @@
         {
             base.OnAppearing();
 
-            if (this.viewModel.MenuItems.Count == 0 || this.viewModel.CollectionsMenuItems.Count == 0) 
+            if (this.viewModel.MenuItems.Count == 0) 
                 this.viewModel.LoadMenuItemsCommand.Execute(null);
         }
     }
