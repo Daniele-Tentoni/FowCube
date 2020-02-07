@@ -99,8 +99,11 @@
 
             try
             {
-                var item = await this.CardStore.DeleteItemAsync(e.Id);
-                this.Cards.Remove(e);
+                var res = await this.CollectionsStore.RemoveCardFromCollection(this.SelectedCollection.Id, e);
+                if(res == true)
+                {
+                    this.Cards.Remove(e);
+                }
             }
             catch (Exception ex)
             {

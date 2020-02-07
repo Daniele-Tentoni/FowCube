@@ -74,8 +74,7 @@
                     <Label.FormattedText>
                         <FormattedString>
                             <FormattedString.Spans>
-                                <Span Text="This app is written in C# and native APIs using the" />
-                                <Span Text=" " />
+                                <Span Text="This app is written in C# and native APIs using the " />
                                 <Span Text="Xamarin Platform" FontAttributes="Bold" />
                                 <Span Text="." />
                             </FormattedString.Spans>
@@ -86,11 +85,9 @@
                     <Label.FormattedText>
                         <FormattedString>
                             <FormattedString.Spans>
-                                <Span Text="It shares code with its" />
-                                <Span Text=" " />
+                                <Span Text="It shares code with its " />
                                 <Span Text="iOS, Android, and Windows" FontAttributes="Bold" />
-                                <Span Text=" " />
-                                <Span Text="versions." />
+                                <Span Text=" versions." />
                             </FormattedString.Spans>
                         </FormattedString>
                     </Label.FormattedText>
@@ -99,6 +96,17 @@
                         Command="{Binding OpenWebCommand}"
                         BackgroundColor="{StaticResource Primary}"
                         TextColor="White" />
+                <Label>
+                    <Label.FormattedText>
+                        <FormattedString>
+                            <FormattedString.Spans>
+                                <Span Text="Send an email to " />
+                                <Span Text="daniele.tentoni.1996@gmail.com" FontAttributes="Bold" />
+                                <Span Text=" to report a bug." />
+                            </FormattedString.Spans>
+                        </FormattedString>
+                    </Label.FormattedText>
+                </Label>
             </StackLayout>
         </ScrollView>
     </Grid>
