@@ -66,7 +66,7 @@
             // Load all the cards. TODO: Load only when neccessary.
             try
             {
-                var cards = await this.CardStore.GetItemsAsync(true);
+                var cards = await this.CardsStore.GetItemsAsync(true);
                 if (cards != null)
                 {
                     foreach (var card in cards)

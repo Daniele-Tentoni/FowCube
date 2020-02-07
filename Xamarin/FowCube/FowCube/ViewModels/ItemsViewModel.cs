@@ -15,8 +15,16 @@
         /// </summary>
         public ObservableCollection<Card> Cards { get; set; }
         public Collection SelectedCollection { get; set; }
-        public Command LoadCardsCommand { get; set; }
-        public Command EditCardCommand { get; set; }
+
+        /// <summary>
+        /// Get the cards without upload the list.
+        /// </summary>
+        public Command GetCardsCommand { get; set; }
+
+        /// <summary>
+        /// Get the cards and upload the list.
+        /// </summary>
+        public Command UpdateCardsCommand { get; set; }
         public Command DeleteCardCommand { get; set; }
 
         public ItemsViewModel(string collectionId)
@@ -24,14 +32,15 @@
             this.Title = "Browse";
             this.Cards = new ObservableCollection<Card>();
             this.SelectedCollection = new Collection() { Id = collectionId };
-            this.LoadCardsCommand = new Command(async () => await this.ExecuteLoadCardsCommand());
+            this.GetCardsCommand = new Command(async () => await this.ExecuteLoadCardsCommand(false));
+            this.UpdateCardsCommand = new Command(async () => await this.ExecuteLoadCardsCommand(true));
             this.DeleteCardCommand = new Command(async (e) => await this.ExecuteDeleteCardCommand(e as Card));
 
             this.UnloadMessageCenterSubscriptions();
             MessagingCenter.Subscribe<AddCardToCollectionViewModel, Card>(this, $"CreateCardTo{this.SelectedCollection.Id}", async (obj, item) =>
             {
                 var newItem = item as Card;
-                var res = await this.CardStore.AddItemAsync(newItem);
+                var res = await this.CardsStore.AddCardAsync(newItem);
                 if(!string.IsNullOrEmpty(res))
                 {
                     var added = await this.CollectionsStore.AddCardToCollection(this.SelectedCollection.Id, new Card { Id = res });
@@ -47,7 +56,7 @@
             });
         }
 
-        async Task ExecuteLoadCardsCommand()
+        async Task ExecuteLoadCardsCommand(bool forceUpdate = false)
         {
             if (this.IsBusy || this.SelectedCollection == null || this.SelectedCollection.Id == "")
                 return;
@@ -57,7 +66,7 @@
             try
             {
                 this.Cards.Clear();
-                var collection = await this.CollectionsStore.GetAsync(this.SelectedCollection.Id);
+                var collection = await this.CollectionsStore.GetAsync(this.SelectedCollection.Id, forceUpdate);
                 if (collection == null) return;
 
                 this.Title = collection.Name;
@@ -68,7 +77,7 @@
                 {
                     if (!this.Cards.Contains(new Card { Id = item }))
                     {
-                        var card = await this.CardStore.GetItemAsync(item);
+                        var card = await this.CardsStore.GetItemAsync(item);
                         if (card != null)
                         {
                             this.Cards.Add(card);

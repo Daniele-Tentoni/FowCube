@@ -4,9 +4,9 @@
     using System.ComponentModel;
     using System.Threading.Tasks;
     using Xamarin.Forms;
-
-    using FowCube.Models;
     using FowCube.Authentication;
+    using FowCube.Models.HomeMenuItems;
+    using Realms;
 
     // Learn more about making custom code visible in the Xamarin.Forms previewer
     // by visiting https://aka.ms/xamarinforms-previewer
@@ -50,6 +50,7 @@
             if(item.MenuType == MenuItemType.Logout)
             {
                 DependencyService.Get<IAuth>().Logout();
+                Realm.GetInstance().RemoveAll();
                 Application.Current.MainPage = new LoginPage();
                 return;
             }

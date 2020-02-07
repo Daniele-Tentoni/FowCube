@@ -40,8 +40,9 @@
         {
             base.OnAppearing();
 
+            // At startup load cards in the view.
             if (this.viewModel.Cards.Count == 0)
-                this.viewModel.LoadCardsCommand.Execute(null);
+                this.viewModel.GetCardsCommand.Execute(null);
         }
     }
 }

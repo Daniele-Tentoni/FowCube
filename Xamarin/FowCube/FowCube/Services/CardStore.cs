@@ -9,35 +9,10 @@
     using System.Net.Http;
     using System.Text;
     using System.Threading.Tasks;
-    using Xamarin.Essentials;
 
-    class CardStore : IDataStore<Card>
+    public class CardStore : BasicStore
     {
-        bool IsConnected => Connectivity.NetworkAccess == NetworkAccess.Internet;
-
-        public HttpClient Client { get; }
-
-        public Realm Realm { get; }
-
-        public CardStore()
-        {
-            // Create the client for API calls.
-            try
-            {
-                this.Client = new HttpClient
-                {
-                    BaseAddress = new Uri($"{App.AzureBackendUrl}/app/")
-                };
-                this.Client.DefaultRequestHeaders.Add("Accept", "application/json");
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.Message);
-            }
-
-            // Get the realm instance.
-            this.Realm = Realm.GetInstance();
-        }
+        public CardStore(): base("app") { }
 
         /// <summary>
         /// Say Hello World to the user.
@@ -59,10 +34,13 @@
         /// </summary>
         /// <param name="item">Card to add.</param>
         /// <returns>The id of the card.</returns>
-        public async Task<string> AddItemAsync(Card item)
+        public async Task<string> AddCardAsync(Card item)
         {
+            if (item == null) return null;
+
+            // TODO: This id is not correct.
             string cardId = string.Empty;
-            if(item != null || this.IsConnected)
+            if(this.IsConnected)
             {
                 var serializedItem = JsonConvert.SerializeObject(item);
                 var response = await this.Client.PostAsync($"card", new StringContent(serializedItem, Encoding.UTF8, "application/json"));
@@ -71,8 +49,8 @@
             }
 
             item.Id = cardId;
-            Realm.Write(() => Realm.Add(item));
-            var card = Realm.All<Card>().SingleOrDefault(s => s.Id == item.Id);
+            this.Realm.Write(() => this.Realm.Add(item));
+            var card = this.Realm.All<Card>().SingleOrDefault(s => s.Id == item.Id);
             return cardId;
         }
 
@@ -86,11 +64,11 @@
             bool remote = true, local = true;
             if (!string.IsNullOrEmpty(id) && this.IsConnected)
                 remote = (await this.Client.DeleteAsync($"card/{id}")).IsSuccessStatusCode;
-            var card = Realm.All<Card>().SingleOrDefault(s => s.Id == id);
+            var card = this.Realm.All<Card>().SingleOrDefault(s => s.Id == id);
             if(card != null)
             {
-                using (var trans = Realm.BeginWrite()) {
-                    Realm.Remove(card);
+                using (var trans = this.Realm.BeginWrite()) {
+                    this.Realm.Remove(card);
                     trans.Commit();
                 }
             }
@@ -105,7 +83,7 @@
         /// <returns>Card.</returns>
         public async Task<Card> GetItemAsync(string id)
         {
-            var card = Realm.Find<Card>(id); // This is more speed.
+            var card = this.Realm.Find<Card>(id); // This is more speed.
             if (card != null) return card;
 
             if (id != null && this.IsConnected)
@@ -128,12 +106,12 @@
             {
                 var json = await this.Client.GetStringAsync($"card");
                 var cards = await Task.Run(() => JsonConvert.DeserializeObject<IEnumerable<Card>>(json));
-                Realm.Write(() => cards.ToList().ForEach(elem => Realm.Add(elem, true)));
+                this.Realm.Write(() => cards.ToList().ForEach(elem => this.Realm.Add(elem, true)));
                 return cards;
             }
             else
             {
-                return Realm.All<Card>();
+                return this.Realm.All<Card>();
             }
         }
 
