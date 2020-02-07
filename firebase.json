@@ -12,6 +12,7 @@
     ]
   },
   "hosting": {
+	  "site": "fowcube",
     "public": "public",
     "ignore": [
       "firebase.json",

@@ -249,18 +249,17 @@ func_coll.put('/collection/addcard/:coll_id', (req, res) => {
         // I don't need to see the above error, the function return ever a value.
         try {
             var docRef = db_coll.doc(req.params.coll_id);
-            await docRef.get()
-                .then((doc) => {
-                    if (doc.exists) {
-                        docRef.update({
-                            cards_in: admin.firestore.FieldValue.arrayUnion(req.body.id)
-                        });
-                    }
-                    return res.status(200).send("Correctly updated.");
-                }).catch((error) => {
-                    console.error("Error adding document: ", error);
-                    return res.status(500).send("Error adding document. Body: " + req.body);
-                });
+            await docRef.get().then((doc) => {
+                if (doc.exists) {
+                    docRef.update({
+                        cards_in: admin.firestore.FieldValue.arrayUnion(req.body.id)
+                    });
+                }
+                return res.status(200).send("Correctly updated.");
+            }).catch((error) => {
+                console.error("Error adding document: ", error);
+                return res.status(500).send("Error adding document. Body: " + req.body);
+            });
         } catch (error) {
             console.log("Add a card error: " + error);
             return res.status(500).send(error);
