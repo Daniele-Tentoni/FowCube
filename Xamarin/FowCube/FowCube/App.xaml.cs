@@ -4,6 +4,7 @@
     using Xamarin.Forms;
     using FowCube.Services;
     using FowCube.Views;
+    using FowCube.Authentication;
 
     public partial class App : Application
     {
@@ -19,8 +20,14 @@
             this.InitializeComponent();
             DependencyService.Register<CardStore>();
             DependencyService.Register<CollectionStore>();
+            var authInfo = DependencyService.Get<IAuth>();
 
-            this.MainPage = new LoginPage();
+            // Check if user is already logged.
+            if(authInfo.GetAuthenticatedUser() != null) {
+                this.MainPage = new MainPage();
+            } else {
+                this.MainPage = new LoginPage();
+            }
         }
 
         protected override void OnStart()
