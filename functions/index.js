@@ -274,3 +274,72 @@ func_coll.delete('/collection/:item_id', () => { });
 
 exports.app = functions.https.onRequest(app);
 exports.func_coll = functions.https.onRequest(func_coll);
+
+// Adds a message that welcomes new users into the chat.
+exports.addWelcomeMessages = functions.firestore.document('fcmTokens/{tokenId}').onCreate(async(token) => {
+    console.log('A new token signed in for the first time.');
+    /*const fullName = user.displayName || 'Anonymous';
+
+    // Saves the new welcome message into the database
+    // which then displays it in the FriendlyChat clients.
+    await admin.firestore().collection('cards').add({
+        name: 'Firebase Bot',
+        description: `${fullName} signed in for the first time! Welcome!`
+    });*/
+    console.log(token);
+});
+
+// Sends a notifications to all users when a new message is posted.
+exports.sendPendNot = functions.firestore.document('pendNot/{notId}').onCreate(async(snapshot) => {
+    // Notification details.
+	const title = snapshot.data().title;
+	const description = snapshot.data().description; // Will be cropped.
+	
+    const payload = {
+        notification: {
+            title: title,
+            body: description ? (description.length <= 100 ? description : description.substring(0, 97) + '...') : '',
+            icon: snapshot.data().profilePicUrl || '/images/profile_placeholder.png' //,
+                //click_action: `https://${process.env.GCLOUD_PROJECT}.firebaseapp.com`,
+        }
+    };
+
+    await sendToAllTokens(payload);
+});
+
+function sendToAllTokens(payload) {
+	// Get the list of device tokens.
+    const allTokens = await admin.firestore().collection('fcmTokens').get();
+    const tokens = [];
+    allTokens.forEach((tokenDoc) => {
+        tokens.push(tokenDoc.id);
+    });
+
+    if (tokens.length > 0) {
+        // Send notifications to all tokens.
+        const response = await admin.messaging().sendToDevice(tokens, payload);
+        await cleanupTokens(response, tokens);
+        console.log('Notifications have been sent and tokens cleaned up.');
+	}
+	
+	Promise.all(allTokens);
+}
+
+// Cleans up the tokens that are no longer valid.
+function cleanupTokens(response, tokens) {
+    // For each notification we check if there was an error.
+    const tokensDelete = [];
+    response.results.forEach((result, index) => {
+        const error = result.error;
+        if (error) {
+            console.error('Failure sending notification to', tokens[index], error);
+            // Cleanup the tokens who are not registered anymore.
+            if (error.code === 'messaging/invalid-registration-token' ||
+                error.code === 'messaging/registration-token-not-registered') {
+                const deleteTask = admin.firestore().collection('messages').doc(tokens[index]).delete();
+                tokensDelete.push(deleteTask);
+            }
+        }
+    });
+    return Promise.all(tokensDelete);
+}
