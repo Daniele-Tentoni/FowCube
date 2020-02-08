@@ -52,7 +52,7 @@
                 <DataTemplate>
                     <ViewCell>
                         <StackLayout Padding="0,10,0,10" VerticalOptions="Fill">
-                            <Label Text="{Binding Title}" FontSize="Medium" HorizontalOptions="CenterAndExpand" Style="{StaticResource faLabelStyle}" />
+                            <Label Text="{Binding Title}" FontSize="Large" HorizontalOptions="CenterAndExpand" Style="{StaticResource faLabelStyle}" />
                         </StackLayout>
                     </ViewCell>
                 </DataTemplate>

@@ -16,6 +16,7 @@
         /// </summary>
         /// <param name="email">User email.</param>
         /// <param name="password">User password.</param>
+        /// <param name="onLoginComplete">Callback when the login complete.</param>
         /// <returns>User token.</returns>
         void LoginWithEmailPasswordAsync(string email, string password, Action<User, string> onLoginComplete);
 

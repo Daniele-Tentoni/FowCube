@@ -14,6 +14,8 @@
 
     public class CollectionStore : BasicStore
     {
+        private string TAG = "COLLECTION STORE";
+
         public CollectionStore() : base("func_coll") { }
 
         public class CollectionsInfo
@@ -23,6 +25,15 @@
 
             [JsonProperty(PropertyName = "collections")]
             public List<Collection> Collections { get; set; }
+        }
+
+        private class CreateInfo
+        {
+            [JsonProperty(PropertyName = "name")]
+            public string Name { get; set; }
+            
+            [JsonProperty(PropertyName = "uid")]
+            public string Uid { get; set; }
         }
 
         /// <summary>
@@ -71,7 +82,8 @@
                 var message = await this.Client.GetAsync($"collections/{uid}");
                 if (!message.IsSuccessStatusCode)
                 {
-                    if (message.StatusCode.Equals(HttpStatusCode.NotFound)) throw new HttpRequestException(message.ReasonPhrase);
+                    if (message.StatusCode.Equals(HttpStatusCode.NotFound))
+                        throw new HttpRequestException(message.ReasonPhrase);
                 }
 
                 // Convert the result and save it in Realm.
@@ -84,7 +96,7 @@
                         tran.Commit();
                     } catch (Exception e)
                     {
-                        Log.Warning("COLLECTION STORE", $"Exception thrown while adding collections to realms.\n{e.Message}");
+                        Log.Warning(TAG, $"Exception thrown while adding collections to realms.\n{e.Message}");
                         tran.Rollback();
                         throw e;
                     }
@@ -92,14 +104,6 @@
             }
 
             return this.Realm.All<Collection>().Where(w => w.Uid == uid).ToList();
-        }
-
-        private class CreateInfo
-        {
-            [JsonProperty(PropertyName = "name")]
-            public string Name { get; set; }
-            [JsonProperty(PropertyName = "uid")]
-            public string Uid { get; set; }
         }
 
         public Task<bool> DeleteItemAsync(string id) => throw new System.NotImplementedException();
@@ -123,7 +127,8 @@
                 var response = await this.Client.GetAsync($"collection/{collectionId}");
                 if (!response.IsSuccessStatusCode)
                 {
-                    if (response.StatusCode.Equals(HttpStatusCode.NotFound)) throw new HttpRequestException(response.ReasonPhrase);
+                    if (response.StatusCode.Equals(HttpStatusCode.NotFound))
+                        throw new HttpRequestException(response.ReasonPhrase);
                     return null;
                 }
                 collection = await Task.Run(() => JsonConvert.DeserializeObject<Collection>(response.Content.ReadAsStringAsync().Result));

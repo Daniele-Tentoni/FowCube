@@ -8,6 +8,7 @@
         Login,
         Logout
     }
+    
     public class HomeMenuItem
     {
         public int Id { get; set; }

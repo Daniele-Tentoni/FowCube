@@ -12,6 +12,11 @@
 
     public class CardStore : BasicStore
     {
+        private string TAG = "CARD STORE";
+
+        /// <summary>
+        /// Create the card store with the app endpoint.
+        /// </summary>
         public CardStore(): base("app") { }
 
         /// <summary>
@@ -49,27 +54,42 @@
             }
 
             item.Id = cardId;
-            this.Realm.Write(() => this.Realm.Add(item));
-            var card = this.Realm.All<Card>().SingleOrDefault(s => s.Id == item.Id);
+            try {
+                this.Realm.Write(() => this.Realm.Add(item));
+            } catch (Exception e) {
+                Log.Warning(TAG, $"Exception thrown: {e.Message}");
+            }
+
+            var card = this.Realm.Find<Card>(s => s.Id == item.Id);
             return cardId;
         }
 
         /// <summary>
         /// Delete a card from the local db and from remote servers.
+        /// This scenario will not be real, a user cannot delete a card.
         /// </summary>
         /// <param name="id">Id of the card to remove.</param>
         /// <returns>True if success, false if fail.</returns>
         public async Task<bool> DeleteItemAsync(string id)
         {
             bool remote = true, local = true;
+
+            // If there is the connection, I'll delete the card in remote too.
             if (!string.IsNullOrEmpty(id) && this.IsConnected)
                 remote = (await this.Client.DeleteAsync($"card/{id}")).IsSuccessStatusCode;
-            var card = this.Realm.All<Card>().SingleOrDefault(s => s.Id == id);
+
+            // I try to remove the card from Realm too.
+            var card = this.Realm.Find<Card>(s => s.Id == id);
             if(card != null)
             {
-                using (var trans = this.Realm.BeginWrite()) {
-                    this.Realm.Remove(card);
-                    trans.Commit();
+                try {
+                    using (var trans = this.Realm.BeginWrite()) {
+                        this.Realm.Remove(card);
+                        trans.Commit();
+                    }
+                } catch (Exception e) {
+                    Log.Warning(this.TAG, $"Exception thrown: {e.Message}");
+                    local = false;
                 }
             }
 
@@ -83,16 +103,20 @@
         /// <returns>Card.</returns>
         public async Task<Card> GetItemAsync(string id)
         {
-            var card = this.Realm.Find<Card>(id); // This is more speed.
-            if (card != null) return card;
+            var card = this.Realm.Find<Card>(id); // This is more fast.
 
-            if (id != null && this.IsConnected)
+            if (card == null && id != null && this.IsConnected)
             {
-                var json = await this.Client.GetStringAsync($"card/{id}");
-                return await Task.Run(() => JsonConvert.DeserializeObject<Card>(json));
+                try {
+                    var json = await this.Client.GetStringAsync($"card/{id}");
+                    card = await Task.Run(() => JsonConvert.DeserializeObject<Card>(json));
+                    this.Realm.Write(() => this.Realm.Add<Card>(card));
+                } catch (Exception e) {
+                    Log.Warning(TAG, $"Exception thrown: {e.Message}");
+                }
             }
 
-            return null;
+            return card;
         }
 
         /// <summary>
@@ -109,10 +133,8 @@
                 this.Realm.Write(() => cards.ToList().ForEach(elem => this.Realm.Add(elem, true)));
                 return cards;
             }
-            else
-            {
-                return this.Realm.All<Card>();
-            }
+            
+            return this.Realm.All<Card>();
         }
 
         public async Task<bool> UpdateItemAsync(Card item)
