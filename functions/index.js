@@ -58,6 +58,7 @@ app.post('/card', (req, res) => {
 				console.log(error);
 				return res.status(500).send(error);
 			});
+			return null;
 		} catch (error) {
 			console.log(error);
 			return res.status(500).send(error);
@@ -262,9 +263,34 @@ func_coll.put('/collection/addcard/:coll_id', (req, res) => {
 				console.error("Error adding document: ", error);
 				return res.status(500).send("Error adding document. Body: " + req.body);
 			});
+			return null;
 		} catch (error) {
 			console.log("Add a card error: " + error);
 			return res.status(500).send(error);
+		}
+	})();
+});
+
+// Rename a collection.
+func_coll.put('/collection/rename/:coll_id', (req, res) => {
+	(async () => {
+		try {
+			var docRef = db_coll.doc(req.params.coll_id);
+			await docRef.get().then((doc) => {
+				if (doc.exists) {
+					docRef.update({
+						name: req.body.name
+					});
+					return res.sendStatus(200);
+				}
+				return res.sendStatus(400);
+			}).catch((error) => {
+				console.log("Error renaming collection: " + error);
+				return res.status(500).send("Error renaming collection: " + error);
+			});
+		} catch (error) {
+			console.log("Error renaming collection: " + error);
+			return res.status(500).send("Error renaming collection: " + error);
 		}
 	})();
 });
