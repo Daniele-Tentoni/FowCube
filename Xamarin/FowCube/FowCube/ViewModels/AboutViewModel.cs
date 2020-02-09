@@ -16,6 +16,8 @@
 
         public ICommand OpenGitHubCommand { get; } = new Command(() => Launcher.OpenAsync(new Uri("https://github.com/Daniele-Tentoni/FowCube")));
 
+        public ICommand OpenGitHubIssuesCommand { get; } = new Command(() => Launcher.OpenAsync(new Uri("https://github.com/Daniele-Tentoni/FowCube/issues")));
+
         public string AppName => AppInfo.Name;
 
         public string AppVersion => AppInfo.Version.ToString();

@@ -56,6 +56,10 @@
                         </FormattedString>
                     </Label.FormattedText>
                 </Label>
+                <Button Margin="20,10,20,0" Text="Continue on Github"
+                        Command="{Binding OpenGitHubCommand}"
+                        BackgroundColor="{StaticResource Primary}"
+                        TextColor="White" />
                 <Label FontSize="Body">
                     <Label.FormattedText>
                         <FormattedString>
@@ -66,8 +70,19 @@
                         </FormattedString>
                     </Label.FormattedText>
                 </Label>
-                <Button Margin="20,10,20,0" Text="Continue on Github"
-                        Command="{Binding OpenWebCommand}"
+                <Label>
+                    <Label.FormattedText>
+                        <FormattedString>
+                            <FormattedString.Spans>
+                                <Span Text="Send an email to " />
+                                <Span Text="daniele.tentoni.1996@gmail.com" FontAttributes="Bold" />
+                                <Span Text=" or submit an issue on Github to report a bug." />
+                            </FormattedString.Spans>
+                        </FormattedString>
+                    </Label.FormattedText>
+                </Label>
+                <Button Margin="20,10,20,0" Text="Submit an issue"
+                        Command="{Binding OpenGitHubIssuesCommand}"
                         BackgroundColor="{StaticResource Primary}"
                         TextColor="White" />
                 <Label FontSize="Body">
@@ -93,20 +108,9 @@
                     </Label.FormattedText>
                 </Label>
                 <Button Margin="20,10,20,0" Text="Learn more"
-                        Command="{Binding OpenWebCommand}"
+                        Command="{Binding OpenXamarinCommand}"
                         BackgroundColor="{StaticResource Primary}"
                         TextColor="White" />
-                <Label>
-                    <Label.FormattedText>
-                        <FormattedString>
-                            <FormattedString.Spans>
-                                <Span Text="Send an email to " />
-                                <Span Text="daniele.tentoni.1996@gmail.com" FontAttributes="Bold" />
-                                <Span Text=" to report a bug." />
-                            </FormattedString.Spans>
-                        </FormattedString>
-                    </Label.FormattedText>
-                </Label>
             </StackLayout>
         </ScrollView>
     </Grid>
