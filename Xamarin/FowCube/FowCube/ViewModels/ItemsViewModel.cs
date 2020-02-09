@@ -7,6 +7,7 @@
     using System;
     using System.Diagnostics;
     using FowCube.Models.Collection;
+    using FowCube.Utils;
 
     public class ItemsViewModel : BaseViewModel
     {
@@ -14,7 +15,31 @@
         /// The cards collection.
         /// </summary>
         public ObservableCollection<Card> Cards { get; set; }
-        public Collection SelectedCollection { get; set; }
+
+        /// <summary>
+        ///  The selected collection.
+        /// </summary>
+        private Collection selectedCollection;
+
+        /// <summary>
+        /// Return the selected collection.
+        /// </summary>
+        public Collection SelectedCollection
+        {
+            get { return this.selectedCollection; }
+            private set
+            {
+                this.SetProperty(ref this.selectedCollection, value);
+                this.OnPropertyChanged(nameof(this.CollectionTitle));
+            }
+        }
+
+        /// <summary>
+        /// Get if a collection is selected.
+        /// </summary>
+        public bool IsCollectionSelected => this.selectedCollection != null && !string.IsNullOrEmpty(this.selectedCollection.Id);
+
+        public string CollectionTitle => this.IsCollectionSelected ? $"Cards of {this.selectedCollection.Name}" : this.Title;
 
         /// <summary>
         /// Get the cards without upload the list.
@@ -27,17 +52,24 @@
         public Command UpdateCardsCommand { get; set; }
         public Command DeleteCardCommand { get; set; }
 
+        public Command RenameCollectionCommand { get; set; }
+
         public ItemsViewModel(string collectionId)
         {
-            this.Title = "Browse";
+            this.Title = "Cards";
             this.Cards = new ObservableCollection<Card>();
             this.SelectedCollection = new Collection() { Id = collectionId };
+
+            // Cards commands.
             this.GetCardsCommand = new Command(async () => await this.ExecuteLoadCardsCommand(false));
             this.UpdateCardsCommand = new Command(async () => await this.ExecuteLoadCardsCommand(true));
             this.DeleteCardCommand = new Command(async (e) => await this.ExecuteDeleteCardCommand(e as Card));
 
+            // Collections commands.
+            this.RenameCollectionCommand = new Command(async () => await this.ExecuteRenameCollectionCommand());
+
             this.UnloadMessageCenterSubscriptions();
-            MessagingCenter.Subscribe<AddCardToCollectionViewModel, Card>(this, $"CreateCardTo{this.SelectedCollection.Id}", async (obj, item) =>
+            MessagingCenter.Subscribe<AddCardToCollectionViewModel, Card>(this, Consts.CREATECARDMESSAGE, async (obj, item) =>
             {
                 var newItem = item as Card;
                 var res = await this.CardsStore.AddCardAsync(newItem);
@@ -48,7 +80,7 @@
                 }
             });
 
-            MessagingCenter.Subscribe<AddCardToCollectionViewModel, Card>(this, $"AddCardTo{this.SelectedCollection.Id}", async (obj, item) =>
+            MessagingCenter.Subscribe<AddCardToCollectionViewModel, Card>(this, Consts.ADDCARDMESSAGE, async (obj, item) =>
             {
                 var cardIn = item as Card;
                 var res = await this.CollectionsStore.AddCardToCollection(this.SelectedCollection.Id, cardIn);
@@ -69,7 +101,7 @@
                 var collection = await this.CollectionsStore.GetAsync(this.SelectedCollection.Id, forceUpdate);
                 if (collection == null) return;
 
-                this.Title = collection.Name;
+                this.Title = "Cards of" + collection.Name;
                 this.SelectedCollection = collection;
 
                 // var items = await this.CardStore.GetItemsAsync(true);
@@ -124,10 +156,43 @@
             }
         }
 
+        /// <summary>
+        /// Execute the renaming of the collection.
+        /// </summary>
+        /// <returns>Nothing.</returns>
+        async Task ExecuteRenameCollectionCommand()
+        {
+            if (this.IsBusy || !this.IsCollectionSelected) return;
+            this.IsBusy = true;
+
+            string result = await Device.InvokeOnMainThreadAsync(async () =>
+            {
+                return await Application.Current.MainPage.DisplayPromptAsync("Rename collection", "What's the name?");
+            });
+
+            try
+            {
+                var res = await this.CollectionsStore.RenameCollection(this.SelectedCollection.Id, result);
+                if (res == true)
+                {
+                    // this.SelectedCollection.Name = result;
+                    this.Title = Consts.GetCardsPageTitle(result);
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine($"Exception thrown: {e.Message}");
+            }
+            finally
+            {
+                this.IsBusy = false;
+            }
+        }
+
         public void UnloadMessageCenterSubscriptions()
         {
-            MessagingCenter.Unsubscribe<AddCardToCollectionViewModel, Card>(this, $"CreateCardTo{this.SelectedCollection.Id}");
-            MessagingCenter.Unsubscribe<AddCardToCollectionViewModel, Card>(this, $"AddCardTo{this.SelectedCollection.Id}");
+            MessagingCenter.Unsubscribe<AddCardToCollectionViewModel, Card>(this, Consts.CREATECARDMESSAGE);
+            MessagingCenter.Unsubscribe<AddCardToCollectionViewModel, Card>(this, Consts.ADDCARDMESSAGE);
         }
     }
 }

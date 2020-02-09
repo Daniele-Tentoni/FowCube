@@ -5,7 +5,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d"
              x:Class="FowCube.Views.ItemsPage"
-             Title="{Binding Title}"
+             Title="{Binding CollectionTitle}"
              x:Name="BrowseItemsPage">
 
     <ContentPage.Resources>
@@ -18,7 +18,11 @@
     </ContentPage.Resources>
 
     <ContentPage.ToolbarItems>
-        <ToolbarItem Text="+" Clicked="AddItem_Clicked" />
+        <ToolbarItem Text="+" Clicked="AddItem_Clicked" Order="Primary" />
+        
+        <!-- You can rename a collection only if there's at least one collection selected. -->
+        <ToolbarItem Text="Rename Collection" Command="{Binding RenameCollectionCommand}"
+                     Order="Secondary" IsEnabled="{Binding CollectionSelected}" />
     </ContentPage.ToolbarItems>
 
     <StackLayout>
@@ -27,6 +31,7 @@
                   ItemsSource="{Binding Cards}"
                   VerticalOptions="FillAndExpand"
                   HasUnevenRows="true"
+                  SeparatorVisibility="None"
                   RefreshCommand="{Binding UpdateCardsCommand}"
                   IsPullToRefreshEnabled="True"
                   IsRefreshing="{Binding IsBusy, Mode=OneWay}"

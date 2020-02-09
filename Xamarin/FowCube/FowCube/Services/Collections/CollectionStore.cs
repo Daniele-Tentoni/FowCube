@@ -1,4 +1,4 @@
-﻿namespace FowCube.Services
+﻿namespace FowCube.Services.Collections
 {
     using System;
     using System.Collections.Generic;
@@ -12,9 +12,12 @@
     using Newtonsoft.Json;
     using Xamarin.Forms.Internals;
 
-    public class CollectionStore : BasicStore
+    /// <summary>
+    /// Represent the CollectionStore core.
+    /// </summary>
+    public partial class CollectionStore : BasicStore
     {
-        private string TAG = "COLLECTION STORE";
+        private readonly string TAG = "COLLECTION STORE";
 
         public CollectionStore() : base("func_coll") { }
 
@@ -31,7 +34,7 @@
         {
             [JsonProperty(PropertyName = "name")]
             public string Name { get; set; }
-            
+
             [JsonProperty(PropertyName = "uid")]
             public string Uid { get; set; }
         }
@@ -94,9 +97,10 @@
                     {
                         result.Collections.ForEach(collection => this.Realm.Add(collection, true));
                         tran.Commit();
-                    } catch (Exception e)
+                    }
+                    catch (Exception e)
                     {
-                        Log.Warning(TAG, $"Exception thrown while adding collections to realms.\n{e.Message}");
+                        Log.Warning(this.TAG, $"Exception thrown while adding collections to realms.\n{e.Message}");
                         tran.Rollback();
                         throw e;
                     }
@@ -106,7 +110,7 @@
             return this.Realm.All<Collection>().Where(w => w.Uid == uid).ToList();
         }
 
-        public Task<bool> DeleteItemAsync(string id) => throw new System.NotImplementedException();
+        public Task<bool> DeleteItemAsync(string id) => throw new NotImplementedException();
 
         /// <summary>
         /// Get a collection by id and userid.
@@ -134,7 +138,7 @@
                 collection = await Task.Run(() => JsonConvert.DeserializeObject<Collection>(response.Content.ReadAsStringAsync().Result));
                 using (var tran = this.Realm.BeginWrite())
                 {
-                    this.Realm.Add<Collection>(collection, true);
+                    this.Realm.Add(collection, true);
                     tran.Commit();
                 }
             }
@@ -151,7 +155,7 @@
         /// <returns>True for a successful operation.</returns>
         public async Task<bool> AddCardToCollection(string collId, string[] cardsIn)
         {
-            if(collId != null && cardsIn != null && cardsIn.Length > 0 && this.IsConnected)
+            if (collId != null && cardsIn != null && cardsIn.Length > 0 && this.IsConnected)
             {
                 var serializedItem = JsonConvert.SerializeObject(cardsIn);
                 var response = await this.Client.PutAsync($"collection/addcard/{collId}", new StringContent(serializedItem, Encoding.UTF8, "application/json"));
@@ -172,7 +176,9 @@
             if (collId == null || card == null) throw new ArgumentNullException();
 
             var serializedItem = JsonConvert.SerializeObject(card);
-            var response = await this.Client.PutAsync($"collection/addcard/{collId}", new StringContent(serializedItem, Encoding.UTF8, "application/json"));
+            var response = await this.Client.PutAsync($"collection/addcard/{collId}",
+                new StringContent(serializedItem, Encoding.UTF8, "application/json")
+                );
             return response.IsSuccessStatusCode;
         }
 
@@ -187,10 +193,10 @@
             if (collId == null || card == null) throw new ArgumentNullException();
 
             var serializedItem = JsonConvert.SerializeObject(card);
-            var response = await this.Client.PutAsync($"collection/removecard/{collId}", new StringContent(serializedItem, Encoding.UTF8, "application/json"));
+            var response = await this.Client.PutAsync($"collection/removecard/{collId}",
+                new StringContent(serializedItem, Encoding.UTF8, "application/json")
+                );
             return response.IsSuccessStatusCode;
         }
-
-        public Task<bool> UpdateItemAsync(Collection item) => throw new System.NotImplementedException();
     }
 }

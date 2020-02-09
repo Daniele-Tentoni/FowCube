@@ -2,6 +2,7 @@
 {
     using FowCube.Models.Cards;
     using FowCube.Models.Collection;
+    using FowCube.Utils;
     using System;
     using System.Collections.ObjectModel;
     using System.Diagnostics;
@@ -95,12 +96,12 @@
             if (newCard)
             {
                 // If it's a new card, I'll add it to the database before.
-                MessagingCenter.Send(this, $"CreateCardTo{this.SelectedCollection.Id}", new Card { Name = Name, Description = Description });
+                MessagingCenter.Send(this, Consts.CREATECARDMESSAGE, new Card { Name = Name, Description = Description });
             }
             else
             {
                 // If it's an old card, I'll add it to collection instead.
-                MessagingCenter.Send(this, $"AddCardTo{this.SelectedCollection.Id}", this.SelectedCard);
+                MessagingCenter.Send(this, Consts.ADDCARDMESSAGE, this.SelectedCard);
             }
 
             await Application.Current.MainPage.Navigation.PopModalAsync();

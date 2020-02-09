@@ -5,6 +5,7 @@
     using FowCube.Services;
     using FowCube.Views;
     using FowCube.Authentication;
+    using FowCube.Services.Collections;
 
     public partial class App : Application
     {

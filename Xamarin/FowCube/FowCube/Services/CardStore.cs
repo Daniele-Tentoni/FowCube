@@ -9,6 +9,7 @@
     using System.Net.Http;
     using System.Text;
     using System.Threading.Tasks;
+    using Xamarin.Forms.Internals;
 
     public class CardStore : BasicStore
     {
@@ -57,10 +58,10 @@
             try {
                 this.Realm.Write(() => this.Realm.Add(item));
             } catch (Exception e) {
-                Log.Warning(TAG, $"Exception thrown: {e.Message}");
+                Log.Warning(this.TAG, $"Exception thrown: {e.Message}");
             }
 
-            var card = this.Realm.Find<Card>(s => s.Id == item.Id);
+            var card = this.Realm.Find<Card>(item.Id);
             return cardId;
         }
 
@@ -79,7 +80,7 @@
                 remote = (await this.Client.DeleteAsync($"card/{id}")).IsSuccessStatusCode;
 
             // I try to remove the card from Realm too.
-            var card = this.Realm.Find<Card>(s => s.Id == id);
+            var card = this.Realm.Find<Card>(id);
             if(card != null)
             {
                 try {

@@ -11,6 +11,7 @@
     using FowCube.Services;
     using FowCube.Authentication;
     using Xamarin.Essentials;
+    using FowCube.Services.Collections;
 
     public class BaseViewModel : INotifyPropertyChanged
     {
