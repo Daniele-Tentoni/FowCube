@@ -15,7 +15,19 @@
 
     public class MenuPageViewModel : BaseViewModel
     {
+        private bool _isRefreshing = false;
+
         public ObservableCollection<HomeMenuItemsGroup> MenuItems { get; set; }
+
+        /// <summary>
+        /// Get if the menu items list is refreshing or not.
+        /// </summary>
+        public bool IsRefreshing
+        {
+            get { return this._isRefreshing; }
+            set { this.SetProperty(ref this._isRefreshing, value); }
+        }
+
         public Command LoadMenuItemsCommand { get; set; }
 
         public MenuPageViewModel()
@@ -29,6 +41,7 @@
         {
             if (this.IsBusy) return;
             this.IsBusy = true;
+            this.IsRefreshing = true;
             this.MenuItems.Clear();
 
             try
@@ -39,14 +52,6 @@
                 try
                 {
                     basicCollections = await this.CollectionsStore.GetAllUserCollectionsAsync(this.UserId, true);
-                }
-                catch (HttpRequestException)
-                {
-                    var res = await this.CollectionsStore.CreateCollectionAsync("1", this.UserId);
-                    if (res != null)
-                    {
-                        basicCollections = await this.CollectionsStore.GetAllUserCollectionsAsync(this.UserId, true);
-                    }
                 }
                 catch (Exception e)
                 {
@@ -61,6 +66,7 @@
                         basicCollections = await this.CollectionsStore.GetAllUserCollectionsAsync(this.UserId, true);
                     }
                 }
+
                 var collectionMenuItems = new HomeMenuItemsGroup("Collection", "Collection view");
                 basicCollections.ForEach(collection =>
                 {
@@ -73,12 +79,6 @@
                     });
                 });
 
-                if (basicCollections.Count > 0)
-                {
-                    // After this operation I exit, so I have to set IsBusy at false at the moment.
-                    this.IsBusy = false;
-                    // await this.ExecuteMenuSelectionCommand(this.CollectionsMenuItems.First());
-                }
                 this.MenuItems.Add(collectionMenuItems);
                 this.MenuItems.Add(new HomeMenuItemsGroup("Settings", "Settings") {
                     new HomeMenuItem {
@@ -104,6 +104,7 @@
             finally
             {
                 this.IsBusy = false;
+                this.IsRefreshing = false;
             }
         }
 
@@ -113,6 +114,7 @@
         {
             if (this.IsBusy) return;
             this.IsBusy = true;
+            this.IsRefreshing = true;
 
             try
             {
@@ -121,6 +123,7 @@
                     return;
 
                 this.IsBusy = false;
+                this.IsRefreshing = false;
                 await ((MainPage)Application.Current.MainPage).NavigateFromMenu(menuItem);
             }
             catch (Exception ex)
@@ -130,6 +133,7 @@
             finally
             {
                 this.IsBusy = false;
+                this.IsRefreshing = false;
             }
         }
     }

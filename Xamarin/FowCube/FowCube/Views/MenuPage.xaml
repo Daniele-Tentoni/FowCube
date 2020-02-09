@@ -47,7 +47,8 @@
                   IsGroupingEnabled="True"
                   GroupDisplayBinding="{Binding Title}"
                   GroupShortNameBinding="{Binding SubTitle}"
-                  SeparatorVisibility="None">
+                  SeparatorVisibility="None"
+                  IsRefreshing="{Binding IsRefreshing}">
             <ListView.GroupHeaderTemplate>
                 <DataTemplate>
                     <ViewCell>
@@ -60,7 +61,7 @@
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <ViewCell>
-                        <Grid Padding="10">
+                        <Grid Padding="10" MinimumHeightRequest="40">
                             <Label Text="{Binding Title}" d:Text="{Binding .}" Style="{StaticResource faMenuLabelStyle}" />
                         </Grid>
                     </ViewCell>
