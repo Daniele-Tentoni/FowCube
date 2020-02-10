@@ -6,6 +6,9 @@
     using FowCube.Views;
     using FowCube.Authentication;
     using FowCube.Services.Collections;
+    using Realms;
+    using FowCube.Models.Collection;
+    using System.Linq;
 
     public partial class App : Application
     {
@@ -15,6 +18,33 @@
         // Now there's the url to firebase.
         public static string AzureBackendUrl =
             DeviceInfo.Platform == DevicePlatform.Android ? "https://us-central1-fowcube.cloudfunctions.net" : "http://localhost:5000";
+
+        /// <summary>
+        /// Use the migration callback to migrate saftly database from a version to another.
+        /// </summary>
+        public static RealmConfiguration RealmConfig = new RealmConfiguration()
+        {
+            SchemaVersion = 2,
+            MigrationCallback = (migration, oldSchemaVersion) =>
+            {
+                var newColls = migration.NewRealm.All<Collection>();
+                var oldColls = migration.OldRealm.All<Collection>();
+
+                for (var i = 0; i < newColls.Count(); i++)
+                {
+                    var oldColl = oldColls.ElementAt(i);
+                    var newColl = newColls.ElementAt(i);
+
+                    // Migrate Collection from version 1 to 2: generate the FirebaseId property.
+                    if (oldSchemaVersion < 2)
+                    {
+                        newColl.FirebaseId = oldColl.Id;
+                        newColl.Id = oldColl.Id;
+                    }
+                };
+
+            }
+        };
 
         public App()
         {

@@ -23,8 +23,8 @@
             if (collId == null || string.IsNullOrEmpty(newName))
                 throw new ArgumentException();
 
-            bool remote = false;
-            if (this.IsConnected)
+            bool remote = true;
+            if (this.IsConnected && false)
             {
                 var serializedItem = JsonConvert.SerializeObject(new RenameCollectionInfo { Name = newName });
                 var response = await this.Client.PutAsync($"collection/rename/{collId}", new StringContent(serializedItem, Encoding.UTF8, "application/json"));

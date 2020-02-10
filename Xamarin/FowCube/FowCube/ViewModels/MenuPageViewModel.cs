@@ -3,22 +3,27 @@
     using FowCube.Models.Collection;
     using FowCube.Models.HomeMenuItems;
     using FowCube.Utils;
+    using FowCube.Utils.Strings;
     using FowCube.Views;
     using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.Diagnostics;
-    using System.Net.Http;
+    using System.Linq;
     using System.Threading.Tasks;
     using Xamarin.Forms;
     using Xamarin.Forms.Internals;
 
     public class MenuPageViewModel : BaseViewModel
     {
+        private ObservableCollection<HomeMenuItemsGroup> _menuItems;
+        public ObservableCollection<HomeMenuItemsGroup> MenuItems
+        {
+            get { return this._menuItems; }
+            set { this.SetProperty(ref this._menuItems, value, nameof(this._menuItems)); }
+        }
+
         private bool _isRefreshing = false;
-
-        public ObservableCollection<HomeMenuItemsGroup> MenuItems { get; set; }
-
         /// <summary>
         /// Get if the menu items list is refreshing or not.
         /// </summary>
@@ -35,6 +40,12 @@
             this.Title = "Menu";
             this.MenuItems = new ObservableCollection<HomeMenuItemsGroup>();
             this.LoadMenuItemsCommand = new Command(async () => await this.ExecuteLoadCollectionsCommand());
+
+            MessagingCenter.Subscribe<ItemsViewModel, Collection>(this, "Rename", async (obj, item) =>
+            {
+                this.MenuItems.First(f => f.Title == AppStrings.MenuTitleCollection).First(f => f.Arg == item.Id).Title = item.Name;
+                await Device.InvokeOnMainThreadAsync(() => Application.Current.MainPage.DisplayAlert("Rename", $"Renamed to {item.Name}.", "Ok"));
+            });
         }
 
         async Task ExecuteLoadCollectionsCommand()
@@ -55,7 +66,8 @@
                 }
                 catch (Exception e)
                 {
-                    Log.Warning("LOAD_COLLECTIONS", $"Exception thrown: {e.Message}");
+                    // Apis mustn't load twice the collection. It means that user haven't collections.
+                    Log.Warning("LOAD_COLLECTIONS", string.Format(AppStrings.ExceptionMessage, e.Message));
                 }
 
                 if (basicCollections.Count == 0)
@@ -67,7 +79,7 @@
                     }
                 }
 
-                var collectionMenuItems = new HomeMenuItemsGroup("Collection", "Collection view");
+                var collectionMenuItems = new HomeMenuItemsGroup(AppStrings.MenuTitleCollection, AppStrings.MenuSubTitleCollection);
                 basicCollections.ForEach(collection =>
                 {
                     collectionMenuItems.Add(new HomeMenuItem
@@ -75,24 +87,25 @@
                         Id = id++,
                         MenuType = MenuItemType.Browse,
                         Title = this.GenerateMenuItemTitle(FontAwesomeIcons.FolderOpen, collection.Name),
-                        Arg = collection.Id
+                        Arg = collection.Id,
+                        IsInCloud = !string.IsNullOrEmpty(collection.FirebaseId)
                     });
                 });
 
                 this.MenuItems.Add(collectionMenuItems);
-                this.MenuItems.Add(new HomeMenuItemsGroup("Settings", "Settings") {
+                this.MenuItems.Add(new HomeMenuItemsGroup(AppStrings.MenuTitleSettings, AppStrings.MenuSubTitleSettings) {
                     new HomeMenuItem {
                         Id = id++,
                         MenuType = MenuItemType.Settings,
-                        Title = this.GenerateMenuItemTitle(FontAwesomeIcons.FileAlt, "Settings")
+                        Title = this.GenerateMenuItemTitle(FontAwesomeIcons.FileAlt, AppStrings.MenuTitleSettings)
                     }, new HomeMenuItem {
                         Id = id++,
                         MenuType = MenuItemType.About,
-                        Title = this.GenerateMenuItemTitle(FontAwesomeIcons.MapMarkerQuestion, "About")
+                        Title = this.GenerateMenuItemTitle(FontAwesomeIcons.MapMarkerQuestion, AppStrings.MenuTitleAbout)
                     }, new HomeMenuItem {
                         Id = id++,
-                        MenuType = MenuItemType.Logout,
-                        Title = this.GenerateMenuItemTitle(FontAwesomeIcons.TimesCircle, "Logout")
+                        MenuType = MenuItemType.SignOut,
+                        Title = this.GenerateMenuItemTitle(FontAwesomeIcons.TimesCircle, AppStrings.MenuTitleSignOut)
                     }
                 });
             }

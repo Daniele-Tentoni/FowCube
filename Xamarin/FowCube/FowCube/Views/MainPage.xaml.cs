@@ -6,7 +6,6 @@
     using Xamarin.Forms;
     using FowCube.Authentication;
     using FowCube.Models.HomeMenuItems;
-    using Realms;
 
     // Learn more about making custom code visible in the Xamarin.Forms previewer
     // by visiting https://aka.ms/xamarinforms-previewer
@@ -17,7 +16,6 @@
         {
             this.InitializeComponent();
             this.MasterBehavior = MasterBehavior.Popover;
-            // this.MenuPages.Add((int)MenuItemType.Browse, (NavigationPage)this.Detail);
         }
 
         public Dictionary<int, NavigationPage> MenuPages { get; } = new Dictionary<int, NavigationPage>();
@@ -41,16 +39,15 @@
                     case MenuItemType.Login:
                         this.MenuPages.Add(item.Id, new NavigationPage(new LoginPage()));
                         break;
-                    case MenuItemType.Logout:
+                    case MenuItemType.SignOut:
                         this.MenuPages.Add(item.Id, new NavigationPage(new LoginPage()));
                         break;
                 }
             }
 
-            if(item.MenuType == MenuItemType.Logout)
+            if(item.MenuType == MenuItemType.SignOut)
             {
                 DependencyService.Get<IAuth>().Logout();
-                Realm.GetInstance().RemoveAll();
                 Application.Current.MainPage = new LoginPage();
                 return;
             }
@@ -66,11 +63,6 @@
 
                 this.IsPresented = false;
             }
-        }
-
-        protected override void OnAppearing()
-        {
-            base.OnAppearing();
         }
     }
 }

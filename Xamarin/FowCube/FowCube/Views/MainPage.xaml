@@ -4,11 +4,12 @@
             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
             mc:Ignorable="d"
-            xmlns:views="clr-namespace:FowCube.Views"
+            xmlns:details="clr-namespace:FowCube.Views.MainPages"
+            xmlns:menus="clr-namespace:FowCube.Views"
             x:Class="FowCube.Views.MainPage">
 
     <MasterDetailPage.Master>
-        <views:MenuPage />
+        <menus:MenuPage />
     </MasterDetailPage.Master>
 
     <MasterDetailPage.Detail>
@@ -19,7 +20,7 @@
                 </OnPlatform>
             </NavigationPage.Icon>
             <x:Arguments>
-                <views:ItemsPage />
+                <details:HomePage />
             </x:Arguments>
         </NavigationPage>
     </MasterDetailPage.Detail>

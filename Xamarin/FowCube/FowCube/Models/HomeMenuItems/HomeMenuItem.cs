@@ -6,7 +6,7 @@
         Settings,
         About,
         Login,
-        Logout
+        SignOut
     }
     
     public class HomeMenuItem
@@ -16,5 +16,6 @@
         public string Icon { get; set; }
         public string Title { get; set; }
         public string Arg { get; set; }
+        public bool IsInCloud { get; set; }
     }
 }

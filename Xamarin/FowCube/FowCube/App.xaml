@@ -20,6 +20,8 @@
                 <Setter Property="CornerRadius" Value="10" />
                 <Setter Property="HasShadow" Value="True" />
             </Style>
+            
+            <!-- Base Label with FontAwesome -->
             <Style x:Key="faLabelStyle" TargetType="Label">
                 <Setter Property="FontFamily" Value="{
                     OnPlatform iOS='Font Awesome 5 Free',
@@ -32,7 +34,7 @@
             <Style x:Key="faButtonStyle" TargetType="Button">
                 <Setter Property="FontFamily" Value="{
                     OnPlatform iOS='Font Awesome 5 Free',
-                    Android='fa-regular-400.ttf#Font Awesome 5 Free Regular'
+                    Android='fa-solid-900.ttf#Font Awesome 5 Free Solid'
                     }" />
                 <Setter Property="CornerRadius" Value="5" />
             </Style>

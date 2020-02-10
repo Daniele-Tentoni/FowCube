@@ -9,11 +9,7 @@
              x:Name="BrowseItemsPage">
 
     <ContentPage.Resources>
-        <Style x:Key="circleButton" TargetType="Button">
-            <Setter Property="BackgroundColor" Value="PaleVioletRed" />
-            <Setter Property="WidthRequest" Value="50" />
-            <Setter Property="HeightRequest" Value="25" />
-            <Setter Property="CornerRadius" Value="10" />
+        <Style x:Key="circleButton" TargetType="Button" BasedOn="{StaticResource faButtonStyle}">
         </Style>
     </ContentPage.Resources>
 
@@ -28,7 +24,7 @@
     <StackLayout>
         <!-- When pull to refresh I must call API to update the list. -->
         <ListView x:Name="CardsListView"
-                  ItemsSource="{Binding Cards}"
+                  ItemsSource="{Binding SelectedCollection.CardsIn}"
                   VerticalOptions="FillAndExpand"
                   HasUnevenRows="true"
                   SeparatorVisibility="None"
@@ -48,22 +44,23 @@
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
 
-                                <Image MinimumWidthRequest="64" MinimumHeightRequest="64" Grid.Column="0" Margin="4" />
+                                <!--<Image MinimumWidthRequest="40" MinimumHeightRequest="40" HeightRequest="64" WidthRequest="64" Grid.Column="0" Margin="4" Source="xamarin_logo.png" />-->
 
-                                <StackLayout Padding="4" Spacing="4" Orientation="Vertical" Grid.Column="1">
+                                <StackLayout Padding="0, 4, 0, 0" Orientation="Vertical" Grid.Column="1">
                                 
                                     <Label Text="{Binding Name}" d:Text="{Binding .}"
                                     LineBreakMode="TailTruncation" Style="{DynamicResource ListItemTextStyle}" 
-                                    FontSize="Title" />
+                                    FontSize="Large" />
 
                                     <Label Text="{Binding Description}" d:Text="Item descripton"
                                     LineBreakMode="TailTruncation" Style="{DynamicResource ListItemDetailTextStyle}"
-                                    FontSize="Subtitle" />
+                                    FontSize="Caption" />
 
                                 </StackLayout>
-                                <Button Text="-" Style="{StaticResource circleButton}" Grid.Column="2" Margin="4"
+                                
+                                <Button Text="&#xf1f8;" Style="{StaticResource circleButton}" Grid.Column="2"
                                     BindingContext="{Binding Source={x:Reference CardsListView}, Path=BindingContext}" 
-                                    Command="{Binding DeleteCardCommand}" 
+                                    BackgroundColor="IndianRed" TextColor="AntiqueWhite" FontSize="Body" Command="{Binding DeleteCardCommand}" 
                                     CommandParameter="{Binding Source={x:Reference CardItem}, Path=BindingContext}"/>
                             </Grid>
                         </Frame>

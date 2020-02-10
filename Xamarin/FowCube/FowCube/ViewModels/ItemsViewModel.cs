@@ -1,45 +1,37 @@
 ﻿namespace FowCube.ViewModels
 {
     using FowCube.Models.Cards;
-    using System.Collections.ObjectModel;
     using Xamarin.Forms;
     using System.Threading.Tasks;
     using System;
     using System.Diagnostics;
     using FowCube.Models.Collection;
     using FowCube.Utils;
+    using FowCube.Utils.Strings;
 
     public class ItemsViewModel : BaseViewModel
     {
         /// <summary>
         /// The cards collection.
         /// </summary>
-        public ObservableCollection<Card> Cards { get; set; }
+        // public ObservableCollection<Card> Cards => this.SelectedCollection.CardsIn;
 
         /// <summary>
         ///  The selected collection.
         /// </summary>
-        private Collection selectedCollection;
+        private readonly string selectedCollectionId;
 
         /// <summary>
         /// Return the selected collection.
         /// </summary>
-        public Collection SelectedCollection
-        {
-            get { return this.selectedCollection; }
-            private set
-            {
-                this.SetProperty(ref this.selectedCollection, value);
-                this.OnPropertyChanged(nameof(this.CollectionTitle));
-            }
-        }
+        public Collection SelectedCollection => this.realm.Find<Collection>(this.selectedCollectionId);
 
         /// <summary>
         /// Get if a collection is selected.
         /// </summary>
-        public bool IsCollectionSelected => this.selectedCollection != null && !string.IsNullOrEmpty(this.selectedCollection.Id);
+        public bool IsCollectionSelected => !string.IsNullOrEmpty(this.selectedCollectionId);
 
-        public string CollectionTitle => this.IsCollectionSelected ? $"Cards of {this.selectedCollection.Name}" : this.Title;
+        public string CollectionTitle => this.IsCollectionSelected ? $"Cards of {this.SelectedCollection.Name}" : this.Title;
 
         /// <summary>
         /// Get the cards without upload the list.
@@ -56,9 +48,13 @@
 
         public ItemsViewModel(string collectionId)
         {
-            this.Title = "Cards";
-            this.Cards = new ObservableCollection<Card>();
-            this.SelectedCollection = new Collection() { Id = collectionId };
+            this.Title = AppStrings.PageTitleCards;
+            this.selectedCollectionId = collectionId;
+            if(!this.IsCollectionSelected)
+            {
+                // I must create a collection.
+                this.realm.Write(() => this.realm.Add(new Collection()));
+            }
 
             // Cards commands.
             this.GetCardsCommand = new Command(async () => await this.ExecuteLoadCardsCommand(false));
@@ -69,22 +65,13 @@
             this.RenameCollectionCommand = new Command(async () => await this.ExecuteRenameCollectionCommand());
 
             this.UnloadMessageCenterSubscriptions();
-            MessagingCenter.Subscribe<AddCardToCollectionViewModel, Card>(this, Consts.CREATECARDMESSAGE, async (obj, item) =>
-            {
-                var newItem = item as Card;
-                var res = await this.CardsStore.AddCardAsync(newItem);
-                if(!string.IsNullOrEmpty(res))
-                {
-                    var added = await this.CollectionsStore.AddCardToCollection(this.SelectedCollection.Id, new Card { Id = res });
-                    if (added) await Task.Run(() => this.ExecuteLoadCardsCommand());
-                }
-            });
 
-            MessagingCenter.Subscribe<AddCardToCollectionViewModel, Card>(this, Consts.ADDCARDMESSAGE, async (obj, item) =>
+            MessagingCenter.Subscribe<AddCardToCollectionViewModel, bool>(this, "NeedReload", async (obj, item) =>
             {
-                var cardIn = item as Card;
-                var res = await this.CollectionsStore.AddCardToCollection(this.SelectedCollection.Id, cardIn);
-                if (res) await Task.Run(() => this.ExecuteLoadCardsCommand());
+                if ((bool)item)
+                {
+                    await Task.Run(() => this.ExecuteLoadCardsCommand());
+                }
             });
         }
 
@@ -97,15 +84,14 @@
 
             try
             {
-                this.Cards.Clear();
+                // this.Cards.Clear();
                 var collection = await this.CollectionsStore.GetAsync(this.SelectedCollection.Id, forceUpdate);
                 if (collection == null) return;
 
-                this.Title = "Cards of" + collection.Name;
-                this.SelectedCollection = collection;
+                this.Title = string.Format(AppStrings.PageTitleCollectionCards, collection.Name);
 
                 // var items = await this.CardStore.GetItemsAsync(true);
-                foreach (var item in collection.CardsIn)
+                /* foreach (var item in collection.CardsIn)
                 {
                     if (!this.Cards.Contains(new Card { Id = item }))
                     {
@@ -115,7 +101,7 @@
                             this.Cards.Add(card);
                         }
                     }
-                }
+                }*/
             }
             catch (Exception ex)
             {
@@ -140,15 +126,15 @@
 
             try
             {
-                var res = await this.CollectionsStore.RemoveCardFromCollection(this.SelectedCollection.Id, e);
+                var res = await this.CollectionsStore.RemoveCardFromCollection(this.selectedCollectionId, e);
                 if(res == true)
                 {
-                    this.Cards.Remove(e);
+                    // this.Cards.Remove(e);
                 }
             }
             catch (Exception ex)
             {
-                Debug.WriteLine(ex);
+                Debug.WriteLine(string.Format(AppStrings.ExceptionMessage, ex.Message));
             }
             finally
             {
@@ -177,11 +163,12 @@
                 {
                     // this.SelectedCollection.Name = result;
                     this.Title = Consts.GetCardsPageTitle(result);
+                    MessagingCenter.Send(this, "Rename", this.selectedCollectionId);
                 }
             }
             catch (Exception e)
             {
-                Debug.WriteLine($"Exception thrown: {e.Message}");
+                Debug.WriteLine(string.Format(AppStrings.ExceptionMessage, e.Message));
             }
             finally
             {
@@ -191,8 +178,7 @@
 
         public void UnloadMessageCenterSubscriptions()
         {
-            MessagingCenter.Unsubscribe<AddCardToCollectionViewModel, Card>(this, Consts.CREATECARDMESSAGE);
-            MessagingCenter.Unsubscribe<AddCardToCollectionViewModel, Card>(this, Consts.ADDCARDMESSAGE);
+            MessagingCenter.Unsubscribe<AddCardToCollectionViewModel, Card>(this, "NeedReload");
         }
     }
 }

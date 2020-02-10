@@ -23,7 +23,7 @@ namespace FowCube.Droid.Implementations
                 Id = ac.Uid,
                 DisplayName = ac.DisplayName,
                 Email = ac.Email,
-                Picture = new Uri(ac.PhotoUrl != null ? $"{ac.PhotoUrl}" : $"https://autisticdating.net/imgs/profile-placeholder.jpg")
+                Picture = ac.PhotoUrl != null ? $"{ac.PhotoUrl}" : $"https://autisticdating.net/imgs/profile-placeholder.jpg"
             }, string.Empty);
         }
     }

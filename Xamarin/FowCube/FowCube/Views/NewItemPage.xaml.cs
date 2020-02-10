@@ -25,8 +25,8 @@
         {
             base.OnAppearing();
 
-            if (this.viewModel.Cards.Count == 0)
-                this.viewModel.LoadCardsCommand.Execute(null);
+            // if (this.viewModel.Cards.Count == 0)
+                // this.viewModel.LoadCardsCommand.Execute(null);
         }
 
         async void Cancel_Clicked(object sender, EventArgs e) => _ = await this.Navigation.PopModalAsync();

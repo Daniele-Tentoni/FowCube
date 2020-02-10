@@ -20,7 +20,7 @@
             };
 
             // Get the realm instance.
-            this.Realm = Realm.GetInstance();
+            this.Realm = Realm.GetInstance(App.RealmConfig);
             /*
              * var authData = string.Format ("{0}:{1}", Constants.Username, Constants.Password);
     var authHeaderValue = Convert.ToBase64String (Encoding.UTF8.GetBytes (authData));

@@ -45,7 +45,7 @@
                                 <StackLayout Padding="5">
                                     <Label Text="{Binding Name}" d:Text="{Binding .}"
                                     LineBreakMode="TailTruncation" Style="{DynamicResource ListItemTextStyle}" 
-                                    FontSize="Title" />
+                                    FontSize="Large" />
 
                                     <!--<Label Text="{Binding Description}" d:Text="Item descripton"
                                     LineBreakMode="TailTruncation" Style="{DynamicResource ListItemDetailTextStyle}"

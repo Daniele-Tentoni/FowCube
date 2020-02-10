@@ -48,7 +48,7 @@ namespace FowCube.Droid.Implementations
                     Username = user.AdditionalUserInfo.Username,
                     DisplayName = user.User.DisplayName,
                     Email = user.User.Email,
-                    Picture = new Uri((user.User.PhotoUrl != null ? $"{ user.User.PhotoUrl}" : $"https://autisticdating.net/imgs/profile-placeholder.jpg"))
+                    Picture = (user.User.PhotoUrl != null ? $"{ user.User.PhotoUrl}" : $"https://autisticdating.net/imgs/profile-placeholder.jpg")
                 };
                 onLoginComplete?.Invoke(logged, string.Empty);
             }

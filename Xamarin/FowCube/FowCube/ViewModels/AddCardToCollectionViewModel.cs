@@ -2,10 +2,11 @@
 {
     using FowCube.Models.Cards;
     using FowCube.Models.Collection;
-    using FowCube.Utils;
+    using FowCube.Utils.Strings;
     using System;
     using System.Collections.ObjectModel;
     using System.Diagnostics;
+    using System.Linq;
     using System.Threading.Tasks;
     using System.Windows.Input;
     using Xamarin.Forms;
@@ -15,9 +16,10 @@
         /// <summary>
         /// The local card collection.
         /// </summary>
-        public ObservableCollection<Card> Cards { get; set; }
+        public ObservableCollection<Card> Cards => new ObservableCollection<Card>(this.realm.All<Card>().ToList());
 
-        public Collection SelectedCollection { get; set; }
+        private readonly string selectedCollectionId;
+        public Collection SelectedCollection => this.realm.Find<Collection>(this.selectedCollectionId);
 
         /// <summary>
         /// Load locally the cards.
@@ -46,11 +48,11 @@
 
         public AddCardToCollectionViewModel(Collection selected)
         {
-            this.SelectedCollection = selected;
+            this.selectedCollectionId = selected.Id;
+
             // Change the title accordly to the collection I want to modify.
-            this.Title = $"Add Card to {this.SelectedCollection.Name}";
+            this.Title = string.Format(AppStrings.PageTitleAddCards, this.SelectedCollection.Name);
             this.SelectedCard = new Card();
-            this.Cards = new ObservableCollection<Card>();
 
             this.SelectedNewCardCommand = new Command(async () => await this.ExecuteSelectedCardCommand(true));
             this.SelectedOldCardCommand = new Command(async () => await this.ExecuteSelectedCardCommand(false));
@@ -68,13 +70,17 @@
             try
             {
                 var cards = await this.CardsStore.GetItemsAsync(true);
-                if (cards != null)
-                {
-                    foreach (var card in cards)
-                    {
-                        this.Cards.Add(card);
-                    }
-                }
+                var cardList = this.realm.All<Card>().ToList();
+                if (cards.Count() == this.Cards.Count)
+                    await Device.InvokeOnMainThreadAsync(() =>
+                     {
+                         Application.Current.MainPage?.DisplayAlert("Right", "Loaded", "Ok");
+                     });
+                else
+                    await Device.InvokeOnMainThreadAsync(() =>
+                     {
+                         Application.Current.MainPage?.DisplayAlert("Error", "Not loaded", "Bad.");
+                     });
             }
             catch (Exception e)
             {
@@ -96,12 +102,36 @@
             if (newCard)
             {
                 // If it's a new card, I'll add it to the database before.
-                MessagingCenter.Send(this, Consts.CREATECARDMESSAGE, new Card { Name = Name, Description = Description });
+                var res = await this.CardsStore.AddCardAsync(new Card
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    Name = Name,
+                    Description = Description
+                });
+                if (!string.IsNullOrEmpty(res))
+                {
+                    var added = await this.CollectionsStore.AddCardToCollection(this.selectedCollectionId, res);
+                    MessagingCenter.Send(this, "NeedReload", added);
+                }
             }
             else
             {
                 // If it's an old card, I'll add it to collection instead.
-                MessagingCenter.Send(this, Consts.ADDCARDMESSAGE, this.SelectedCard);
+                // TODO: This dosen't work and I don't know why.
+                // var res = await this.CollectionsStore.AddCardToCollection(this.selectedCollectionId, this.SelectedCard.Id);
+                try
+                {
+                    this.realm.Write(() =>
+                    {
+                        var card = this.realm.Find<Card>(this.SelectedCard.Id);
+                        this.realm.Find<Collection>(this.selectedCollectionId).CardsIn.Add(card);
+                    });
+                }
+                catch (Exception e)
+                {
+                    Debug.WriteLine(AppStrings.ExceptionMessage, e.Message);
+                }
+                MessagingCenter.Send(this, "NeedReload", true);
             }
 
             await Application.Current.MainPage.Navigation.PopModalAsync();

@@ -20,7 +20,7 @@
             this.BindingContext = this.viewModel = new ItemsViewModel(collectionId);
         }
 
-        public ItemsPage() : this("") { }
+        public ItemsPage() : this(string.Empty) { }
 
         async void OnItemSelected(object sender, SelectedItemChangedEventArgs args)
         {
@@ -41,8 +41,8 @@
             base.OnAppearing();
 
             // At startup load cards in the view.
-            if (this.viewModel.Cards.Count == 0)
-                this.viewModel.GetCardsCommand.Execute(null);
+            // if (this.viewModel.IsCollectionSelected)
+                // this.viewModel.GetCardsCommand.Execute(null);
         }
     }
 }

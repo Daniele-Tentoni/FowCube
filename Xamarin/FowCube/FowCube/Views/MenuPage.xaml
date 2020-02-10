@@ -5,12 +5,13 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d"
              x:Class="FowCube.Views.MenuPage"
-             Title="{Binding Title}">
+             Title="{Binding Title}"
+             IsBusy="{Binding IsBusy}">
 
     <StackLayout>
         <StackLayout.Resources>
             <ResourceDictionary>
-                <Style x:Key="MenuItemLabelStyle" TargetType="Label">
+                <Style x:Key="MenuItemLabelStyle" TargetType="Label" BasedOn="{StaticResource faLabelStyle}">
                     <Setter Property="FontAttributes" Value="Bold" />
                     <Setter Property="FontSize" Value="Medium" />
                     <Setter Property="Padding" Value="5" />
@@ -62,7 +63,9 @@
                 <DataTemplate>
                     <ViewCell>
                         <Grid Padding="10" MinimumHeightRequest="40">
+                            <Label Text="{Binding Icon}" d:Text="{Binding .}" Style="{StaticResource faMenuLabelStyle}" />
                             <Label Text="{Binding Title}" d:Text="{Binding .}" Style="{StaticResource faMenuLabelStyle}" />
+                            <Label Text="{Binding CloudIcon}" Style="{StaticResource faMenuLabelStyle}" IsVisible="{Binding IsInCloud}" />
                         </Grid>
                     </ViewCell>
                 </DataTemplate>
