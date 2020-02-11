@@ -24,7 +24,7 @@
         /// <summary>
         /// Return the selected collection.
         /// </summary>
-        public Collection SelectedCollection => this.realm.Find<Collection>(this.selectedCollectionId);
+        public Collection SelectedCollection => App.Database.GetCollectionByIdAsync(this.selectedCollectionId).Result;
 
         /// <summary>
         /// Get if a collection is selected.
@@ -50,11 +50,6 @@
         {
             this.Title = AppStrings.PageTitleCards;
             this.selectedCollectionId = collectionId;
-            if(!this.IsCollectionSelected)
-            {
-                // I must create a collection.
-                this.realm.Write(() => this.realm.Add(new Collection()));
-            }
 
             // Cards commands.
             this.GetCardsCommand = new Command(async () => await this.ExecuteLoadCardsCommand(false));
@@ -68,7 +63,7 @@
 
             MessagingCenter.Subscribe<AddCardToCollectionViewModel, bool>(this, "NeedReload", async (obj, item) =>
             {
-                if ((bool)item)
+                if (item)
                 {
                     await Task.Run(() => this.ExecuteLoadCardsCommand());
                 }

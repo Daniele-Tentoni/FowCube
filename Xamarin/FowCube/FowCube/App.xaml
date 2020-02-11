@@ -25,7 +25,7 @@
             <Style x:Key="faLabelStyle" TargetType="Label">
                 <Setter Property="FontFamily" Value="{
                     OnPlatform iOS='Font Awesome 5 Free',
-                    Android='fa-regular-400.ttf#Font Awesome 5 Free Regular'
+                    Android='fa-solid-900.ttf#Font Awesome 5 Free Solid'
                     }" />
             </Style>
             <Style x:Key="faMenuLabelStyle" TargetType="Label" BasedOn="{StaticResource faLabelStyle}">

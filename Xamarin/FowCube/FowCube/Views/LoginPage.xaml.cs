@@ -4,7 +4,6 @@
     using FowCube.Models;
     using FowCube.Utils;
     using FowCube.Utils.Strings;
-    using Realms;
     using System;
     using Xamarin.Essentials;
     using Xamarin.Forms;
@@ -15,7 +14,6 @@
     public partial class LoginPage : ContentPage
     {
         private readonly IAuth auth = DependencyService.Get<IAuth>();
-        private readonly Realm realm = Realm.GetInstance(App.RealmConfig);
 
         public string LoginSubtitle = string.Format(AppStrings.LoginSubTitle, FontAwesomeIcons.Heart);
 
@@ -50,7 +48,6 @@
             {
                 // Add the user to SecureStorage and Realm.
                 SecureStorage.SetAsync("user_id", string.IsNullOrEmpty(user.Id) ? "null" : user.Id);
-                Realm.GetInstance(App.RealmConfig).Write(() => this.realm.Add(user, true));
                 Device.BeginInvokeOnMainThread(() =>
                 {
                     Application.Current.MainPage = new MainPage();

@@ -65,7 +65,7 @@
                         <Grid Padding="10" MinimumHeightRequest="40">
                             <Label Text="{Binding Icon}" d:Text="{Binding .}" Style="{StaticResource faMenuLabelStyle}" />
                             <Label Text="{Binding Title}" d:Text="{Binding .}" Style="{StaticResource faMenuLabelStyle}" />
-                            <Label Text="{Binding CloudIcon}" Style="{StaticResource faMenuLabelStyle}" IsVisible="{Binding IsInCloud}" />
+                            <Label Text="{Binding CloudIcon}" IsVisible="{Binding IsInCloud}" Style="{StaticResource faMenuLabelStyle}" />
                         </Grid>
                     </ViewCell>
                 </DataTemplate>

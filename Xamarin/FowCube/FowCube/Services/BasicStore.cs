@@ -1,6 +1,5 @@
 ﻿namespace FowCube.Services
 {
-    using Realms;
     using System;
     using System.Net.Http;
     using Xamarin.Essentials;
@@ -10,7 +9,6 @@
     {
         protected bool IsConnected => Connectivity.NetworkAccess == NetworkAccess.Internet;
         public HttpClient Client { get; }
-        public Realm Realm { get; }
 
         public BasicStore(string firstEndpoint)
         {
@@ -18,9 +16,6 @@
             {
                 BaseAddress = new Uri($"{App.AzureBackendUrl}/{firstEndpoint}/")
             };
-
-            // Get the realm instance.
-            this.Realm = Realm.GetInstance(App.RealmConfig);
             /*
              * var authData = string.Format ("{0}:{1}", Constants.Username, Constants.Password);
     var authHeaderValue = Convert.ToBase64String (Encoding.UTF8.GetBytes (authData));

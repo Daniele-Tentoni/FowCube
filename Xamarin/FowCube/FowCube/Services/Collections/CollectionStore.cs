@@ -24,41 +24,21 @@
 
         public CollectionStore() : base("func_coll") { }
 
-        public class CollectionsInfo
-        {
-            [JsonProperty(PropertyName = "uid")]
-            public string UserId { get; set; }
-
-            [JsonProperty(PropertyName = "collections")]
-            public List<Collection> Collections { get; set; }
-        }
-
-        private class CreateInfo
-        {
-            [JsonProperty(PropertyName = "name")]
-            public string Name { get; set; }
-
-            [JsonProperty(PropertyName = "uid")]
-            public string Uid { get; set; }
-        }
-
         /// <summary>
         /// Create a new collection by the user.
         /// </summary>
         /// <param name="name">The name of the collection.</param>
         /// <param name="uid">The creator id.</param>
         /// <returns>Return the id of the collection created.</returns>
-        public async Task<string> CreateCollectionAsync(string name, string uid)
+        public async Task<string> CreateCollectionAsync(string name, string uid, bool forceUpdate = false)
         {
             if (name == null || uid == null) return null;
 
             // TODO: This id is not correct.
             string collId = string.Empty;
-            if (this.IsConnected && false)
+            if (this.IsConnected && forceUpdate)
             {
-                var serializedItem = JsonConvert.SerializeObject(
-                    new CreateInfo { Name = name, Uid = uid }
-                    );
+                var serializedItem = JsonConvert.SerializeObject(new { name, uid });
                 var response = await this.Client.PostAsync($"collection",
                     new StringContent(serializedItem, Encoding.UTF8, "application/json")
                     );
@@ -66,16 +46,9 @@
                     collId = await response.Content.ReadAsStringAsync();
             }
 
-            Collection coll;
             try
             {
-                // Add a new collection to the local Realm Database.
-                this.Realm.Write(() =>
-                {
-                    coll = new Collection { Id = Guid.NewGuid().ToString(), Name = name };
-                    this.Realm.Find<User>(uid).Collections.Add(coll);
-                    collId = coll.Id;
-                });
+                await App.Database.CreateCollectionAsync(new Collection { Name = name, User = uid });
             }
             catch (Exception e)
             {
@@ -83,6 +56,15 @@
             }
 
             return collId;
+        }
+
+        public class CollectionsInfo
+        {
+            [JsonProperty(PropertyName = "uid")]
+            public string UserId { get; set; }
+
+            [JsonProperty(PropertyName = "collections")]
+            public List<Collection> Collections { get; set; }
         }
 
         /// <summary>
@@ -100,32 +82,23 @@
                 if (!this.IsConnected) throw new NotConnectedException();
 
                 var message = await this.Client.GetAsync($"collections/{uid}");
-                if (!message.IsSuccessStatusCode)
-                {
-                    if (message.StatusCode.Equals(HttpStatusCode.NotFound))
-                        throw new HttpRequestException(message.ReasonPhrase);
-                }
+                if (message.StatusCode.Equals(HttpStatusCode.NotFound))
+                    throw new HttpRequestException(message.ReasonPhrase);
 
                 // Convert the result and save it in Realm.
-                var result = JsonConvert.DeserializeObject<CollectionsInfo>(message.Content.ReadAsStringAsync().Result);
-                using (var tran = this.Realm.BeginWrite())
+                var result = JsonConvert.DeserializeObject<List<Collection>>(message.Content.ReadAsStringAsync().Result);
+                try
                 {
-                    try
-                    {
-                        result.Collections.ForEach(collection => this.Realm.Add(collection, true));
-                        tran.Commit();
-                    }
-                    catch (Exception e)
-                    {
-                        Log.Warning(this.TAG, $"Exception thrown while adding collections to realms.\n{e.Message}");
-                        tran.Rollback();
-                        throw e;
-                    }
+                    result.ForEach(async coll => await App.Database.CreateCollectionAsync(coll));
+                }
+                catch (Exception e)
+                {
+                    Log.Warning(this.TAG, $"Exception thrown while adding collections to realms.\n{e.Message}");
+                    throw e;
                 }
             }
 
-            var collections = this.Realm.Find<User>(uid).Collections;
-            return collections.ToList();
+            return await App.Database.GetCollectionsByUserAsync(uid);
         }
 
         public Task<bool> DeleteItemAsync(string id) => throw new NotImplementedException();
@@ -137,17 +110,16 @@
         /// <param name="id">Id of the collection.</param>
         /// <param name="uid">Id of the user.</param>
         /// <returns>Return the selected collection.</returns>
-        public async Task<Collection> GetAsync(string collectionId, bool forceUpdate = false)
+        public async Task<Collection> GetAsync(string collId, bool forceUpdate = false)
         {
-            if (collectionId == null) throw new ArgumentNullException();
+            if (collId == null) throw new ArgumentNullException();
 
-            // Check if a collection is in Realm.
-            var collection = this.Realm.Find<Collection>(collectionId);
+            var collection = await App.Database.GetCollectionByIdAsync(collId);
             if (collection == null || forceUpdate)
             {
                 if (!this.IsConnected) throw new NotConnectedException();
 
-                var response = await this.Client.GetAsync($"collection/{collectionId}");
+                var response = await this.Client.GetAsync($"collection/{collId}");
                 if (!response.IsSuccessStatusCode)
                 {
                     if (response.StatusCode.Equals(HttpStatusCode.NotFound))
@@ -155,27 +127,10 @@
                     return null;
                 }
                 collection = await Task.Run(() => JsonConvert.DeserializeObject<Collection>(response.Content.ReadAsStringAsync().Result));
-                using (var tran = this.Realm.BeginWrite())
-                {
-                    this.Realm.Add(collection, true);
-                    tran.Commit();
-                }
+                await App.Database.CreateCollectionAsync(collection);
             }
 
             return collection;
-        }
-
-        /// <summary>
-        /// Add a card to the collection.
-        /// TODO: Refactor this operation to work better.
-        /// </summary>
-        /// <param name="collId">Collection Id.</param>
-        /// <param name="cardsIn">Cards array list.</param>
-        /// <returns>True for a successful operation.</returns>
-        public async Task<bool> AddCardToCollection(string collId, string cardId)
-        {
-            var card = this.Realm.Find<Card>(cardId);
-            return await this.AddCardToCollection(collId, card);
         }
 
         /// <summary>
@@ -184,20 +139,24 @@
         /// <param name="collId">Collection Id.</param>
         /// <param name="card">Card Entity.</param>
         /// <returns>True for a successful operation.</returns>
-        public async Task<bool> AddCardToCollection(string collId, Card card)
+        public async Task<bool> AddCardToCollection(string collId, string cardId, bool forceUpdate = false)
         {
-            if (collId == null || card == null) throw new ArgumentNullException();
+            if (collId == null || string.IsNullOrEmpty(cardId)) throw new ArgumentNullException();
 
-            if (this.IsConnected && false)
+            var remote = this.IsConnected && forceUpdate ? await this.RemoteAddToCollection(collId, cardId) : true;
+
+            bool local = false;
+            try
             {
-                var serializedItem = JsonConvert.SerializeObject(card);
-                var response = await this.Client.PutAsync($"collection/addcard/{collId}",
-                    new StringContent(serializedItem, Encoding.UTF8, "application/json")
-                    );
+                var res = await App.Database.AddCardToCollectionAsync(collId, cardId);
+                local = true;
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(string.Format(AppStrings.ExceptionMessage, e.Message));
             }
 
-            this.Realm.Write(() => this.Realm.Find<Collection>(collId).CardsIn.Add(card));
-            return true;
+            return remote && local;
         }
 
         /// <summary>
@@ -206,20 +165,36 @@
         /// <param name="collId">Collection Id.</param>
         /// <param name="card">Card Entity.</param>
         /// <returns>True for a successful operation.</returns>
-        public async Task<bool> RemoveCardFromCollection(string collId, Card card)
+        public async Task<bool> RemoveCardFromCollection(string collId, Card card, bool forceUpdate = false)
         {
             if (collId == null || card == null) throw new ArgumentNullException();
 
-            if (this.IsConnected && false)
+            // Update remote if needed.
+            var remote = this.IsConnected && forceUpdate ? await this.RemoteRemoveFromCollection(collId, card.Id) : true;
+
+            // Update local everytime.
+            bool local = false;
+            try
             {
-                var serializedItem = JsonConvert.SerializeObject(card);
-                var response = await this.Client.PutAsync($"collection/removecard/{collId}",
-                    new StringContent(serializedItem, Encoding.UTF8, "application/json")
-                    );
+                var res = App.Database.RemoveCardToCollectionAsync(collId, card.Id);
+                local = true;
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(string.Format(AppStrings.ExceptionMessage, e.Message));
             }
 
-            this.Realm.Write(() => this.Realm.Find<Collection>(collId).CardsIn.Remove(card));
-            return true;
+            return remote && local;
+        }
+
+        public async Task<bool> RenameCollection(string collId, string newName, bool forceUpdate = false)
+        {
+            // Update remote if needed.
+            var remote = forceUpdate ? await this.RemoteRenameCollection(collId, newName) : true;
+
+            // Update local everytime.
+            var res = await App.Database.RenameCollection(collId, newName);
+            return remote && res == 0;
         }
     }
 }

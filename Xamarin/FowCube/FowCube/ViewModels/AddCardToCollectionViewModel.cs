@@ -16,10 +16,11 @@
         /// <summary>
         /// The local card collection.
         /// </summary>
-        public ObservableCollection<Card> Cards => new ObservableCollection<Card>(this.realm.All<Card>().ToList());
+        public ObservableCollection<Card> Cards => new ObservableCollection<Card>(this.SelectedCollection.CardsIn);
+                    
 
         private readonly string selectedCollectionId;
-        public Collection SelectedCollection => this.realm.Find<Collection>(this.selectedCollectionId);
+        public Collection SelectedCollection => App.Database.GetCollectionByIdAsync(this.selectedCollectionId).Result;
 
         /// <summary>
         /// Load locally the cards.
@@ -70,7 +71,6 @@
             try
             {
                 var cards = await this.CardsStore.GetItemsAsync(true);
-                var cardList = this.realm.All<Card>().ToList();
                 if (cards.Count() == this.Cards.Count)
                     await Device.InvokeOnMainThreadAsync(() =>
                      {
@@ -121,11 +121,16 @@
                 // var res = await this.CollectionsStore.AddCardToCollection(this.selectedCollectionId, this.SelectedCard.Id);
                 try
                 {
-                    this.realm.Write(() =>
+                    var added = await this.CollectionsStore.AddCardToCollection(this.selectedCollectionId, this.SelectedCard.Id);
+                    /*using(var trans = this.realm.BeginWrite())
                     {
-                        var card = this.realm.Find<Card>(this.SelectedCard.Id);
-                        this.realm.Find<Collection>(this.selectedCollectionId).CardsIn.Add(card);
-                    });
+                        // Search all entities in Realm Database.
+                        var card = this.realm.Find<Card>();
+                        // this.realm.Find<Collection>(this.selectedCollectionId).CardsIn.Add(card);
+                        // Search only the card in Realm Database.
+                        this.SelectedCollection.CardsIn.Add(card);
+                        trans.Commit();
+                    }*/
                 }
                 catch (Exception e)
                 {

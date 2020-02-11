@@ -2,7 +2,6 @@
 {
     using FowCube.Models.Cards;
     using Newtonsoft.Json;
-    using Realms;
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -45,7 +44,7 @@
             if (item == null) return null;
 
             // TODO: This id is not correct.
-            string cardId = string.Empty;
+            string cardId = Guid.NewGuid().ToString();
             if(this.IsConnected)
             {
                 var serializedItem = JsonConvert.SerializeObject(item);
@@ -56,12 +55,11 @@
 
             item.Id = cardId;
             try {
-                this.Realm.Write(() => this.Realm.Add(item));
+                await App.Database.CreateCardAsync(item);
             } catch (Exception e) {
                 Log.Warning(this.TAG, $"Exception thrown: {e.Message}");
             }
 
-            var card = this.Realm.Find<Card>(item.Id);
             return cardId;
         }
 
@@ -80,18 +78,14 @@
                 remote = (await this.Client.DeleteAsync($"card/{id}")).IsSuccessStatusCode;
 
             // I try to remove the card from Realm too.
-            var card = this.Realm.Find<Card>(id);
-            if(card != null)
+            try
             {
-                try {
-                    using (var trans = this.Realm.BeginWrite()) {
-                        this.Realm.Remove(card);
-                        trans.Commit();
-                    }
-                } catch (Exception e) {
-                    Log.Warning(this.TAG, $"Exception thrown: {e.Message}");
-                    local = false;
-                }
+                var res = await App.Database.DeleteCardByIdAsync(id);
+            }
+            catch (Exception e)
+            {
+                Log.Warning(this.TAG, $"Exception thrown: {e.Message}");
+                local = false;
             }
 
             return remote && local;
@@ -104,16 +98,19 @@
         /// <returns>Card.</returns>
         public async Task<Card> GetItemAsync(string id)
         {
-            var card = this.Realm.Find<Card>(id); // This is more fast.
+            var card = await App.Database.GetCardByIdAsync(id); // This is more fast.
 
             if (card == null && id != null && this.IsConnected)
             {
-                try {
+                try
+                {
                     var json = await this.Client.GetStringAsync($"card/{id}");
                     card = await Task.Run(() => JsonConvert.DeserializeObject<Card>(json));
-                    this.Realm.Write(() => this.Realm.Add<Card>(card));
-                } catch (Exception e) {
-                    Log.Warning(TAG, $"Exception thrown: {e.Message}");
+                    var res = await App.Database.CreateCardAsync(card);
+                }
+                catch (Exception e)
+                {
+                    Log.Warning(this.TAG, $"Exception thrown: {e.Message}");
                 }
             }
 
@@ -131,11 +128,15 @@
             {
                 var json = await this.Client.GetStringAsync($"card");
                 var cards = await Task.Run(() => JsonConvert.DeserializeObject<IEnumerable<Card>>(json));
-                this.Realm.Write(() => cards.ToList().ForEach(elem => this.Realm.Add(elem, true)));
+                cards.ForEach(async card =>
+                {
+                    var res = await App.Database.CreateCardAsync(card);
+                    Log.Warning(this.TAG, $"Added: {res}");
+                });
                 return cards;
             }
-            
-            return this.Realm.All<Card>();
+
+            return await App.Database.GetAllCards();
         }
 
         public async Task<bool> UpdateItemAsync(Card item)

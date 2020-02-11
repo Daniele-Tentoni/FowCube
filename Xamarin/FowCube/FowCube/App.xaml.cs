@@ -6,9 +6,9 @@
     using FowCube.Views;
     using FowCube.Authentication;
     using FowCube.Services.Collections;
-    using Realms;
-    using FowCube.Models.Collection;
-    using System.Linq;
+    using System.IO;
+    using System;
+    using FowCube.Services.Database;
 
     public partial class App : Application
     {
@@ -19,32 +19,18 @@
         public static string AzureBackendUrl =
             DeviceInfo.Platform == DevicePlatform.Android ? "https://us-central1-fowcube.cloudfunctions.net" : "http://localhost:5000";
 
-        /// <summary>
-        /// Use the migration callback to migrate saftly database from a version to another.
-        /// </summary>
-        public static RealmConfiguration RealmConfig = new RealmConfiguration()
+        static Database database;
+        public static Database Database
         {
-            SchemaVersion = 2,
-            MigrationCallback = (migration, oldSchemaVersion) =>
+            get
             {
-                var newColls = migration.NewRealm.All<Collection>();
-                var oldColls = migration.OldRealm.All<Collection>();
-
-                for (var i = 0; i < newColls.Count(); i++)
+                if (database == null)
                 {
-                    var oldColl = oldColls.ElementAt(i);
-                    var newColl = newColls.ElementAt(i);
-
-                    // Migrate Collection from version 1 to 2: generate the FirebaseId property.
-                    if (oldSchemaVersion < 2)
-                    {
-                        newColl.FirebaseId = oldColl.Id;
-                        newColl.Id = oldColl.Id;
-                    }
-                };
-
+                    database = new Database(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "collection.db3"));
+                }
+                return database;
             }
-        };
+        }
 
         public App()
         {

@@ -10,14 +10,12 @@
     using FowCube.Authentication;
     using Xamarin.Essentials;
     using FowCube.Services.Collections;
-    using Realms;
 
     public class BaseViewModel : INotifyPropertyChanged
     {
         protected IAuth AuthInfo => DependencyService.Get<IAuth>();
         protected CardStore CardsStore => DependencyService.Get<CardStore>() ?? new CardStore();
         protected CollectionStore CollectionsStore => DependencyService.Get<CollectionStore>() ?? new CollectionStore();
-        protected readonly Realm realm = Realm.GetInstance(App.RealmConfig);
 
         public string DisplayName => SecureStorage.GetAsync("display_name").Result;
         public string UserId => SecureStorage.GetAsync("user_id").Result;

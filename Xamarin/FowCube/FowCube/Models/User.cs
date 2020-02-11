@@ -1,9 +1,9 @@
 ﻿namespace FowCube.Models
 {
-    using Realms;
+    using SQLite;
     using System.Collections.Generic;
 
-    public class User : RealmObject
+    public class User
     {
         [PrimaryKey]
         public string Id { get; set; }

@@ -1,38 +1,40 @@
 ﻿namespace FowCube.Models.Cards
 {
-    using System.Collections.Generic;
+    using FowCube.Models.Collection;
     using Newtonsoft.Json;
-    using Realms;
+    using SQLite;
+    using SQLiteNetExtensions.Attributes;
+    using System.Collections.Generic;
 
     /// <summary>
     /// A simple card.
     /// </summary>
-    public class Card : RealmObject
+    [Table("Cards")]
+    public class Card
     {
         /// <summary>
         /// Card Identifier.
         /// </summary>
         [JsonProperty(PropertyName = "id")]
         [PrimaryKey]
+        [Column("Id")]
         public string Id { get; set; }
 
         /// <summary>
         /// Card name.
         /// </summary>
         [JsonProperty(PropertyName = "name")]
+        [Column("Name")]
         public string Name { get; set; }
 
         /// <summary>
         /// Long description.
         /// </summary>
         [JsonProperty(PropertyName = "description")]
+        [Column("Description")]
         public string Description { get; set; }
 
-        /// <summary>
-        /// All cards types.
-        /// TODO: Implement this in APIs.
-        /// </summary>
-        [JsonProperty(PropertyName = "types")]
-        public IList<int> Types { get; }
+        [ManyToMany(typeof(CollectionCard))]
+        public virtual List<Collection> Collections { get; set; }
     }
 }
