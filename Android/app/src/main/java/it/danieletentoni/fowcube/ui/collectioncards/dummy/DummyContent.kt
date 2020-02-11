@@ -1,4 +1,4 @@
-package it.danieletentoni.fowcube.ui.home.dummy
+package it.danieletentoni.fowcube.ui.collectioncards.dummy
 
 import java.util.ArrayList
 import java.util.HashMap

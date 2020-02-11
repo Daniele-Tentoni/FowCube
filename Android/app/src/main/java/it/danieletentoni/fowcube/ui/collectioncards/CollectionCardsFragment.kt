@@ -1,4 +1,4 @@
-package it.danieletentoni.fowcube.ui.home
+package it.danieletentoni.fowcube.ui.collectioncards
 
 import android.content.Context
 import android.os.Bundle
@@ -10,9 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import it.danieletentoni.fowcube.R
-
-import it.danieletentoni.fowcube.ui.home.dummy.DummyContent
-import it.danieletentoni.fowcube.ui.home.dummy.DummyContent.DummyItem
+import it.danieletentoni.fowcube.ui.collectioncards.dummy.DummyContent
 
 /**
  * A fragment representing a list of Items.
@@ -80,7 +78,7 @@ class CollectionCardsFragment : Fragment() {
      */
     interface OnListFragmentInteractionListener {
         // TODO: Update argument type and name
-        fun onListFragmentInteraction(item: DummyItem?)
+        fun onListFragmentInteraction(item: DummyContent.DummyItem?)
     }
 
     companion object {

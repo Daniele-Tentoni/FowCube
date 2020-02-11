@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name" translatable="false">FowCube</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="menu_home">Home</string>
+    <string name="menu_collection">Collection</string>
+    <string name="menu_collections">Collections</string>
+    <string name="menu_share">Share</string>
+    <string name="menu_send">Send</string>
+
+    <string name="home_welcome">Welcome back! I\'m not updated because my developer haven\'t enough time</string>
+</resources>
