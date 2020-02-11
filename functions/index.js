@@ -151,6 +151,7 @@ func_coll.post('/collection', (req, res) => {
 	(async () => {
 		try {
 			var docRef = await db_coll.add({
+				id: req.body.id,
 				name: req.body.name,
 				uid: req.body.uid,
 				cards_in: Array()
@@ -176,17 +177,14 @@ func_coll.get('/collections/:uid', (req, res) => {
 				let docs = querySnapshot.docs;
 				for (let doc of docs) {
 					const selectedItem = {
-						id: doc.id,
+						id: doc.data().collId,
+						fid: doc.id,
 						name: doc.data().name,
 						uid: doc.data().uid
 					};
 					response.push(selectedItem);
 				}
-				const result = {
-					uid: req.params.uid,
-					collections: response
-				};
-				return res.status(200).send(result);
+				return res.status(200).send(response);
 			});
 		} catch (error) {
 			console.log(error);
@@ -194,6 +192,7 @@ func_coll.get('/collections/:uid', (req, res) => {
 		} finally {
 			console.log("get all collections");
 		}
+		return null;
 	})();
 });
 
@@ -205,7 +204,8 @@ func_coll.get('/collection/:coll_id', (req, res) => {
 			await docRef.get().then((doc) => {
 				if (doc.exists) {
 					const result = {
-						id: doc.id,
+						id: doc.data().collId,
+						fid: doc.id,
 						name: doc.data().name,
 						uid: doc.data().uid,
 						cards_in: doc.data().cards_in
@@ -218,6 +218,7 @@ func_coll.get('/collection/:coll_id', (req, res) => {
 				console.log(error);
 				return res.status(500).send("Didn't find any collection.");
 			});
+			return null;
 		} catch (error) {
 			console.log(error);
 			return res.status(500).send(error);
@@ -288,6 +289,7 @@ func_coll.put('/collection/rename/:coll_id', (req, res) => {
 				console.log("Error renaming collection: " + error);
 				return res.status(500).send("Error renaming collection: " + error);
 			});
+			return null;
 		} catch (error) {
 			console.log("Error renaming collection: " + error);
 			return res.status(500).send("Error renaming collection: " + error);
