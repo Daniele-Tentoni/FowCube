@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.google.firebase.firestore.util.Assert
 import it.danieletentoni.fowcube.OnListFragmentInteractionListener
 import it.danieletentoni.fowcube.R
 
@@ -42,13 +43,10 @@ class CollectionsFragment : Fragment() {
 
         // Set the adapter
         if (view is RecyclerView) {
-            with(view) {
-                layoutManager = when {
-                    columnCount <= 1 -> LinearLayoutManager(context)
-                    else -> GridLayoutManager(context, columnCount)
-                }
-                adapter = MyCollectionRecyclerViewAdapter(DummyContent.ITEMS, listener)
-            }
+            val context = this.context!!.applicationContext
+            val adapter = MyCollectionRecyclerViewAdapter(context, listener)
+            view.adapter = adapter
+            view.layoutManager = LinearLayoutManager(context)
         }
         return view
     }
