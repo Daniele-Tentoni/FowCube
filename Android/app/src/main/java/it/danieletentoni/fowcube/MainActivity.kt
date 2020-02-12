@@ -1,25 +1,28 @@
 package it.danieletentoni.fowcube
 
 import android.os.Bundle
-import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.google.android.material.snackbar.Snackbar
+import android.view.Menu
+import android.view.MenuItem
+import android.view.View
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
+import androidx.core.view.GravityCompat
+import androidx.drawerlayout.widget.DrawerLayout
+import androidx.fragment.app.DialogFragment
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
-import androidx.drawerlayout.widget.DrawerLayout
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
-import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
-import android.view.Menu
-import android.view.MenuItem
-import android.widget.Toast
-import androidx.core.view.GravityCompat
+import it.danieletentoni.fowcube.ui.collections.NewCollectionFragment
+import it.danieletentoni.fowcube.viewModels.CollectionViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener,
-    OnListFragmentInteractionListener {
+    OnListFragmentInteractionListener, NewCollectionFragment.NoticeDialogListener {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
 
@@ -29,11 +32,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val toolbar: Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
 
+        // Hide the fab button for next uses.
         val fab: FloatingActionButton = findViewById(R.id.fab)
-        fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show()
-        }
+        fab.visibility = View.GONE
+
         val drawerLayout: DrawerLayout = findViewById(R.id.drawer_layout)
         val navView: NavigationView = findViewById(R.id.nav_view)
         val navController = findNavController(R.id.nav_host_fragment)
@@ -82,5 +84,14 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     override fun onListFragmentInteraction(item: it.danieletentoni.fowcube.ui.collectioncards.dummy.DummyContent.DummyItem) {
         Toast.makeText(baseContext, R.string.app_name, Toast.LENGTH_LONG).show()
+    }
+
+    override fun onDialogPositiveClick(dialog: DialogFragment) {
+        CollectionViewModel().insert()
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun onDialogNegativeClick(dialog: DialogFragment) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 }

@@ -22,7 +22,8 @@ abstract class FowCubeDatabase : RoomDatabase() {
         private val scope: CoroutineScope
     ) : RoomDatabase.Callback() {
 
-        override fun onOpen(db: SupportSQLiteDatabase) {
+        override fun onCreate(db: SupportSQLiteDatabase) {
+            super.onCreate(db)
             // Use this to populate the database whenever the app is started.
             super.onOpen(db)
             INSTANCE?.let { database ->
