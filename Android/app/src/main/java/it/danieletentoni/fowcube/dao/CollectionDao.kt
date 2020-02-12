@@ -13,7 +13,7 @@ interface CollectionDao {
     suspend fun updateCollection(vararg collection: CollectionModel)
 
     @Query(value = "SELECT * FROM collection")
-    fun getAllCollectionLiveData(vararg uid:String): LiveData<List<CollectionModel>>
+    fun getAllCollectionLiveData(): LiveData<List<CollectionModel>>
 
     @Query(value = "SELECT * FROM collection WHERE uid = :uid")
     fun getAllCollectionByUidLiveData(vararg uid:String): LiveData<List<CollectionModel>>

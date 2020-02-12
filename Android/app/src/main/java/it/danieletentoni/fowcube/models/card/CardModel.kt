@@ -9,7 +9,7 @@ import androidx.room.PrimaryKey
 class CardModel {
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
-    var id: String = ""
+    var id: Int = 0
 
     @ColumnInfo(name = "name")
     var name: String = ""

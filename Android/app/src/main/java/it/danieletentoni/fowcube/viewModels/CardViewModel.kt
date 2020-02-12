@@ -16,7 +16,7 @@ class CardViewModel(application: Application): AndroidViewModel(application) {
     val allCards: LiveData<List<CardModel>>
 
     init {
-        val cardDao = FowCubeDatabase.getDatabase(application).CardDao()
+        val cardDao = FowCubeDatabase.getDatabase(application, viewModelScope).cardDao()
         repository = CardRepository(cardDao)
         allCards = repository.allCards
     }

@@ -8,7 +8,7 @@ import androidx.room.PrimaryKey
 class CollectionModel {
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
-    var id:String = ""
+    var id:Int = 0
 
     @ColumnInfo(name = "fid")
     var fid:String = ""

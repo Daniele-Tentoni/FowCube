@@ -17,7 +17,7 @@ class CollectionViewModel(application: Application): AndroidViewModel(applicatio
     val allCollections: LiveData<List<CollectionModel>>
 
     init {
-        val collectionDao = FowCubeDatabase.getDatabase(application).CollectionDao()
+        val collectionDao = FowCubeDatabase.getDatabase(application, viewModelScope).collectionDao()
         repository = CollectionRepository(collectionDao)
         allCollections = repository.allCollection
     }

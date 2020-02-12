@@ -41,7 +41,7 @@ class MyCollectionRecyclerViewAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = collections[position]
-        holder.mIdView.text = item.id
+        holder.mIdView.text = item.id.toString()
         holder.mContentView.text = item.name
 
         with(holder.mView) {
