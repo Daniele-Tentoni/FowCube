@@ -1,17 +1,15 @@
 package it.danieletentoni.fowcube.ui.collections
 
-import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
+import it.danieletentoni.fowcube.OnListFragmentInteractionListener
 import it.danieletentoni.fowcube.R
+import it.danieletentoni.fowcube.ui.collectioncards.dummy.DummyContent
+import kotlinx.android.synthetic.main.fragment_card_list_item.view.*
 
-
-import it.danieletentoni.fowcube.ui.collections.CollectionsFragment.OnListFragmentInteractionListener
-import it.danieletentoni.fowcube.ui.collections.dummy.DummyContent.DummyItem
-
-import kotlinx.android.synthetic.main.fragment_collection.view.*
 
 /**
  * [RecyclerView.Adapter] that can display a [DummyItem] and makes a call to the
@@ -19,7 +17,7 @@ import kotlinx.android.synthetic.main.fragment_collection.view.*
  * TODO: Replace the implementation with code for your data type.
  */
 class MyCollectionRecyclerViewAdapter(
-    private val mValues: List<DummyItem>,
+    private val mValues: MutableList<it.danieletentoni.fowcube.ui.collections.dummy.DummyContent.DummyItem>,
     private val mListener: OnListFragmentInteractionListener?
 ) : RecyclerView.Adapter<MyCollectionRecyclerViewAdapter.ViewHolder>() {
 
@@ -27,7 +25,7 @@ class MyCollectionRecyclerViewAdapter(
 
     init {
         mOnClickListener = View.OnClickListener { v ->
-            val item = v.tag as DummyItem
+            val item = v.tag as DummyContent.DummyItem
             // Notify the active callbacks interface (the activity, if the fragment is attached to
             // one) that an item has been selected.
             mListener?.onListFragmentInteraction(item)

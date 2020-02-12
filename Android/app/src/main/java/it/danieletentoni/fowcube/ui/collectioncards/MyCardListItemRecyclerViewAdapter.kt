@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import it.danieletentoni.fowcube.OnListFragmentInteractionListener
 import it.danieletentoni.fowcube.R
 import it.danieletentoni.fowcube.ui.collectioncards.dummy.DummyContent
 
@@ -17,7 +18,7 @@ import kotlinx.android.synthetic.main.fragment_card_list_item.view.*
  */
 class MyCardListItemRecyclerViewAdapter(
     private val mValues: List<DummyContent.DummyItem>,
-    private val mListener: CollectionCardsFragment.OnListFragmentInteractionListener?
+    private val mListener: OnListFragmentInteractionListener?
 ) : RecyclerView.Adapter<MyCardListItemRecyclerViewAdapter.ViewHolder>() {
 
     private val mOnClickListener: View.OnClickListener

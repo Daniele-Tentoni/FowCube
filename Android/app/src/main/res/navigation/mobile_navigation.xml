@@ -12,10 +12,10 @@
         tools:layout="@layout/fragment_home" >
         <action
             android:id="@+id/action_nav_home_to_collectionsFragment"
-            app:destination="@id/nav_collection" />
+            app:destination="@id/nav_collections" />
     </fragment>
     <fragment
-        android:id="@+id/nav_collection"
+        android:id="@+id/nav_collections"
         android:name="it.danieletentoni.fowcube.ui.collections.CollectionsFragment"
         android:label="fragment_collection_list"
         tools:layout="@layout/fragment_collection_list" >

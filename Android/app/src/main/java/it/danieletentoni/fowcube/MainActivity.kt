@@ -14,11 +14,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Toast
 import androidx.core.view.GravityCompat
-import it.danieletentoni.fowcube.ui.collections.CollectionsFragment
 import kotlinx.android.synthetic.main.activity_main.*
 
-class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
+class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener,
+    OnListFragmentInteractionListener {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
 
@@ -40,7 +41,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         // menu should be considered as top level destinations.
         appBarConfiguration = AppBarConfiguration(
             setOf(
-                R.id.nav_home, R.id.nav_collection
+                R.id.nav_home, R.id.nav_collections
             ), drawerLayout
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
@@ -63,7 +64,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             R.id.nav_home -> {
                 // TODO: Load Home Fragment.
             }
-            R.id.nav_collection -> {
+            R.id.nav_collections -> {
                 // TODO: Load Collection Fragment.
             }
         }
@@ -77,5 +78,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         } else {
             super.onBackPressed()
         }
+    }
+
+    override fun onListFragmentInteraction(item: it.danieletentoni.fowcube.ui.collectioncards.dummy.DummyContent.DummyItem) {
+        Toast.makeText(baseContext, R.string.app_name, Toast.LENGTH_LONG).show()
     }
 }

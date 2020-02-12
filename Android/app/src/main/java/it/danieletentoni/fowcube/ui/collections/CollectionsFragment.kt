@@ -9,10 +9,10 @@ import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import it.danieletentoni.fowcube.OnListFragmentInteractionListener
 import it.danieletentoni.fowcube.R
 
 import it.danieletentoni.fowcube.ui.collections.dummy.DummyContent
-import it.danieletentoni.fowcube.ui.collections.dummy.DummyContent.DummyItem
 
 /**
  * A fragment representing a list of Items.
@@ -65,22 +65,6 @@ class CollectionsFragment : Fragment() {
     override fun onDetach() {
         super.onDetach()
         listener = null
-    }
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     *
-     *
-     * See the Android Training lesson
-     * [Communicating with Other Fragments](http://developer.android.com/training/basics/fragments/communicating.html)
-     * for more information.
-     */
-    interface OnListFragmentInteractionListener {
-        // TODO: Update argument type and name
-        fun onListFragmentInteraction(item: DummyItem?)
     }
 
     companion object {
