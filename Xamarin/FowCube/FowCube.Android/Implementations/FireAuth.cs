@@ -96,7 +96,7 @@ namespace FowCube.Droid.Implementations
 
         public User GetAuthenticatedUser()
         {
-            if (FirebaseAuth.Instance != null && FirebaseAuth.Instance.CurrentUser != null)
+             if (FirebaseAuth.Instance != null && FirebaseAuth.Instance.CurrentUser != null)
                 return new User
                 {
                     DisplayName = FirebaseAuth.Instance.CurrentUser.DisplayName,

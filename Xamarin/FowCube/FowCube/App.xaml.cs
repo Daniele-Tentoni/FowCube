@@ -2,10 +2,8 @@
 {
     using Xamarin.Essentials;
     using Xamarin.Forms;
-    using FowCube.Services;
     using FowCube.Views;
     using FowCube.Authentication;
-    using FowCube.Services.Collections;
     using System.IO;
     using System;
     using FowCube.Services.Database;
@@ -35,8 +33,8 @@
         public App()
         {
             this.InitializeComponent();
-            DependencyService.Register<CardStore>();
-            DependencyService.Register<CollectionStore>();
+            // DependencyService.Register<CardStore>();
+            // DependencyService.Register<CollectionStore>();
             var authInfo = DependencyService.Get<IAuth>();
 
             // Check if user is already logged.

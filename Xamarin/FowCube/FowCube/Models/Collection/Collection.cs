@@ -44,5 +44,7 @@
         [JsonProperty(PropertyName = "cards_in")]
         [ManyToMany(typeof(CollectionCard))]
         public virtual List<Card> CardsIn { get; set; }
+
+        public virtual int CardsCount => this.CardsIn != null ? this.CardsIn.Count : 0;
     }
 }

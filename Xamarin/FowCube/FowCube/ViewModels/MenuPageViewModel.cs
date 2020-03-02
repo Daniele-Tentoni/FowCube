@@ -62,7 +62,7 @@
                 var basicCollections = new List<Collection>();
                 try
                 {
-                    basicCollections = await this.CollectionsStore.GetAllUserCollectionsAsync(this.UserId, true);
+                    basicCollections = await App.Database.GetCollectionsByUserAsync("11");
                 }
                 catch (Exception e)
                 {
@@ -70,14 +70,14 @@
                     Log.Warning("LOAD_COLLECTIONS", string.Format(AppStrings.ExceptionMessage, e.Message));
                 }
 
-                if (basicCollections.Count == 0)
+                /*if (basicCollections.Count == 0)
                 {
                     var res = await this.CollectionsStore.CreateCollectionAsync("1", this.UserId);
                     if (res != null)
                     {
                         basicCollections = await this.CollectionsStore.GetAllUserCollectionsAsync(this.UserId, true);
                     }
-                }
+                }*/
 
                 var collectionMenuItems = new HomeMenuItemsGroup(AppStrings.MenuTitleCollection, AppStrings.MenuSubTitleCollection);
                 basicCollections.ForEach(collection =>

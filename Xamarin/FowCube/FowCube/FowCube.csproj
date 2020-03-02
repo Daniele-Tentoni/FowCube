@@ -11,7 +11,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Services\BasicStore.cs" />
+    <Compile Remove="Services\CardStore.cs" />
+    <Compile Remove="Services\Collections\CollectionStore.cs" />
+    <Compile Remove="Services\Collections\CollectionStore.Firebase.cs" />
     <Compile Remove="Services\ICardService.cs" />
+    <Compile Remove="Services\IDataStore.cs" />
     <Compile Remove="Services\MockDataStore.cs" />
     <Compile Remove="Authentication\IGoogleManager.cs" />
   </ItemGroup>
@@ -52,6 +57,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Models\Cards\" />
+    <Folder Include="Services\Collections\" />
     <Folder Include="Views\UserViews\" />
   </ItemGroup>
   <ItemGroup>

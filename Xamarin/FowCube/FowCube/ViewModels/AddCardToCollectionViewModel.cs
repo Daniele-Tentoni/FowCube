@@ -70,7 +70,7 @@
             // Load all the cards. TODO: Load only when neccessary.
             try
             {
-                var cards = await this.CardsStore.GetItemsAsync(true);
+                var cards = await App.Database.GetAllCards(); // .GetItemsAsync(true);
                 if (cards.Count() == this.Cards.Count)
                     await Device.InvokeOnMainThreadAsync(() =>
                      {
@@ -101,16 +101,19 @@
         {
             if (newCard)
             {
+                string cardId = Guid.NewGuid().ToString();
                 // If it's a new card, I'll add it to the database before.
-                var res = await this.CardsStore.AddCardAsync(new Card
+                // var res = await this.CardsStore.AddCardAsync(new Card
+                var res = await App.Database.CreateCardAsync(new Card
                 {
-                    Id = Guid.NewGuid().ToString(),
+                    Id = cardId,
                     Name = Name,
                     Description = Description
                 });
-                if (!string.IsNullOrEmpty(res))
+
+                if (res > 0)
                 {
-                    var added = await this.CollectionsStore.AddCardToCollection(this.selectedCollectionId, res);
+                    var added = await App.Database.AddCardToCollectionAsync(this.selectedCollectionId, cardId);
                     MessagingCenter.Send(this, "NeedReload", added);
                 }
             }
@@ -121,7 +124,7 @@
                 // var res = await this.CollectionsStore.AddCardToCollection(this.selectedCollectionId, this.SelectedCard.Id);
                 try
                 {
-                    var added = await this.CollectionsStore.AddCardToCollection(this.selectedCollectionId, this.SelectedCard.Id);
+                    // var added = await this.CollectionsStore.AddCardToCollection(this.selectedCollectionId, this.SelectedCard.Id);
                     /*using(var trans = this.realm.BeginWrite())
                     {
                         // Search all entities in Realm Database.

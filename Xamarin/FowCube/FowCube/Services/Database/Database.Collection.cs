@@ -8,6 +8,7 @@
 
     public partial class Database
     {
+        #region Create
         /// <summary>
         /// Create.
         /// </summary>
@@ -19,7 +20,14 @@
                 collection.Id = Guid.NewGuid().ToString();
             return await this._database.InsertAsync(collection);
         }
+        #endregion
 
+        #region Read
+        public async Task<List<Collection>> GetAllCollectionsAsync()
+        {
+            var res = await this._database.Table<Collection>().ToListAsync();
+            return res;
+        }
         /// <summary>
         /// Read.
         /// </summary>
@@ -36,7 +44,9 @@
             var res = await this._database.Table<Collection>().FirstOrDefaultAsync(w => w.Id == collId);
             return res;
         }
+        #endregion
 
+        #region Update
         /// <summary>
         /// Add a card to a collection.
         /// </summary>
@@ -80,5 +90,6 @@
             coll.Name = newName;
             return await this._database.UpdateAsync(coll);
         }
+        #endregion
     }
 }

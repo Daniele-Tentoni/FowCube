@@ -6,16 +6,14 @@
     using System.Runtime.CompilerServices;
 
     using Xamarin.Forms;
-    using FowCube.Services;
     using FowCube.Authentication;
     using Xamarin.Essentials;
-    using FowCube.Services.Collections;
 
     public class BaseViewModel : INotifyPropertyChanged
     {
         protected IAuth AuthInfo => DependencyService.Get<IAuth>();
-        protected CardStore CardsStore => DependencyService.Get<CardStore>() ?? new CardStore();
-        protected CollectionStore CollectionsStore => DependencyService.Get<CollectionStore>() ?? new CollectionStore();
+        // protected CardStore CardsStore => DependencyService.Get<CardStore>() ?? new CardStore();
+        // protected CollectionStore CollectionsStore => DependencyService.Get<CollectionStore>() ?? new CollectionStore();
 
         public string DisplayName => SecureStorage.GetAsync("display_name").Result;
         public string UserId => SecureStorage.GetAsync("user_id").Result;

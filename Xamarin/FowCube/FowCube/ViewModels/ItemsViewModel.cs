@@ -12,11 +12,6 @@
     public class ItemsViewModel : BaseViewModel
     {
         /// <summary>
-        /// The cards collection.
-        /// </summary>
-        // public ObservableCollection<Card> Cards => this.SelectedCollection.CardsIn;
-
-        /// <summary>
         ///  The selected collection.
         /// </summary>
         private readonly string selectedCollectionId;
@@ -80,7 +75,7 @@
             try
             {
                 // this.Cards.Clear();
-                var collection = await this.CollectionsStore.GetAsync(this.SelectedCollection.Id, forceUpdate);
+                var collection = await App.Database.GetCollectionByIdAsync(this.selectedCollectionId); // await this.CollectionsStore.GetAsync(this.SelectedCollection.Id, forceUpdate);
                 if (collection == null) return;
 
                 this.Title = string.Format(AppStrings.PageTitleCollectionCards, collection.Name);
@@ -121,8 +116,8 @@
 
             try
             {
-                var res = await this.CollectionsStore.RemoveCardFromCollection(this.selectedCollectionId, e);
-                if(res == true)
+                var res = await App.Database.RemoveCardToCollectionAsync(this.selectedCollectionId, e.Id); // await this.CollectionsStore.RemoveCardFromCollection(this.selectedCollectionId, e);
+                if(res > 0)
                 {
                     // this.Cards.Remove(e);
                 }
@@ -153,8 +148,8 @@
 
             try
             {
-                var res = await this.CollectionsStore.RenameCollection(this.SelectedCollection.Id, result);
-                if (res == true)
+                var res = await App.Database.RenameCollection(this.selectedCollectionId, result); // await this.CollectionsStore.RenameCollection(this.SelectedCollection.Id, result);
+                if (res > 0)
                 {
                     // this.SelectedCollection.Name = result;
                     this.Title = Consts.GetCardsPageTitle(result);
