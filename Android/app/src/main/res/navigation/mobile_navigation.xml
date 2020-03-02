@@ -10,18 +10,6 @@
         android:name="it.danieletentoni.fowcube.ui.home.HomeFragment"
         android:label="@string/menu_home"
         tools:layout="@layout/fragment_home" >
-        <action
-            android:id="@+id/action_nav_home_to_collectionsFragment"
-            app:destination="@id/nav_collections" />
-    </fragment>
-    <fragment
-        android:id="@+id/nav_collections"
-        android:name="it.danieletentoni.fowcube.ui.collections.CollectionsFragment"
-        android:label="@string/menu_collections"
-        tools:layout="@layout/fragment_collection_list" >
-        <action
-            android:id="@+id/action_collectionsFragment_to_collectionCardsFragment"
-            app:destination="@id/collectionCardsFragment" />
     </fragment>
     <fragment
         android:id="@+id/collectionCardsFragment"

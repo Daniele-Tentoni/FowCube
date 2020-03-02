@@ -6,4 +6,10 @@
         android:orderInCategory="100"
         android:title="@string/action_settings"
         app:showAsAction="never" />
+
+    <item
+        android:id="@+id/collections_clear"
+        android:orderInCategory="200"
+        android:title="Clear"
+        app:showAsAction="ifRoom" />
 </menu>

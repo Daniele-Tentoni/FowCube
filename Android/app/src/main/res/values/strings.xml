@@ -25,5 +25,10 @@
     <string name="menu_settings">Settings</string>
     <string name="menu_share">Share</string>
 
+    <!-- Home strings -->
+    <string name="user_collection_title">Your collections</string>
+    <string name="explore_collection">Explore</string>
+    <string name="share_collection">Share</string>
+    <string name="rename_collection">Rename</string>
     <string name="home_welcome">Welcome back! I\'m not updated because my developer haven\'t enough time</string>
 </resources>

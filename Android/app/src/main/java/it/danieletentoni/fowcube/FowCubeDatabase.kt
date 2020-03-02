@@ -52,14 +52,8 @@ abstract class FowCubeDatabase : RoomDatabase() {
 
                     val collectionDao = database.collectionDao()
 
-                    var collection = CollectionModel()
+                    val collection = CollectionModel()
                     collection.name = "First"
-                    collectionDao.insertCollection(collection)
-                    collection = CollectionModel()
-                    collection.name = "Second"
-                    collectionDao.insertCollection(collection)
-                    collection = CollectionModel()
-                    collection.name = "Third"
                     collectionDao.insertCollection(collection)
                 }
             }

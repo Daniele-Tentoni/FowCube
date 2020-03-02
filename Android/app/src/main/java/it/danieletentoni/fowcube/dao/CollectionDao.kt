@@ -20,4 +20,7 @@ interface CollectionDao {
 
     @Query(value = "SELECT * FROM collection WHERE id = :id")
     fun getCollectionByIdLiveData(vararg id:String): LiveData<CollectionModel>
+
+    @Query(value = "DELETE FROM collection WHERE 1 = 1")
+    fun clearCollections()
 }

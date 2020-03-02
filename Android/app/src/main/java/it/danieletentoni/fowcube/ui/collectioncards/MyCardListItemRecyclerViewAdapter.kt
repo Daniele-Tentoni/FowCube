@@ -5,20 +5,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import it.danieletentoni.fowcube.OnListFragmentInteractionListener
 import it.danieletentoni.fowcube.R
 import it.danieletentoni.fowcube.ui.collectioncards.dummy.DummyContent
 
 import kotlinx.android.synthetic.main.fragment_card_list_item.view.*
 
 /**
- * [RecyclerView.Adapter] that can display a [DummyItem] and makes a call to the
- * specified [OnListFragmentInteractionListener].
+ * [RecyclerView.Adapter] that can display a [DummyItem].
  * TODO: Replace the implementation with code for your data type.
  */
 class MyCardListItemRecyclerViewAdapter(
-    private val mValues: List<DummyContent.DummyItem>,
-    private val mListener: OnListFragmentInteractionListener?
+    private val mValues: List<DummyContent.DummyItem>
 ) : RecyclerView.Adapter<MyCardListItemRecyclerViewAdapter.ViewHolder>() {
 
     private val mOnClickListener: View.OnClickListener
@@ -28,7 +25,6 @@ class MyCardListItemRecyclerViewAdapter(
             val item = v.tag as DummyContent.DummyItem
             // Notify the active callbacks interface (the activity, if the fragment is attached to
             // one) that an item has been selected.
-            mListener?.onListFragmentInteraction(item)
         }
     }
 

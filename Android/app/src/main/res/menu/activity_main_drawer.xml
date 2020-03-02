@@ -9,13 +9,6 @@
             android:icon="@drawable/ic_menu_camera"
             android:title="@string/menu_home" />
 
-        <!--<item android:title="@string/menu">
-            <menu>-->
-                <item
-                    android:id="@+id/nav_collections"
-                    android:icon="@drawable/ic_menu_share"
-                    android:title="@string/menu_collections" />
-
         <item android:id="@+id/nav_cards"
             android:icon="@drawable/ic_view_list_black_24dp"
             android:title="@string/menu_cards" />

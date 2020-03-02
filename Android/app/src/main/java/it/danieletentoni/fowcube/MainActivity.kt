@@ -1,15 +1,15 @@
 package it.danieletentoni.fowcube
 
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
-import androidx.fragment.app.DialogFragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
@@ -17,12 +17,12 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
+import it.danieletentoni.fowcube.models.collection.CollectionModel
 import it.danieletentoni.fowcube.ui.collections.NewCollectionFragment
-import it.danieletentoni.fowcube.viewModels.CollectionViewModel
+import it.danieletentoni.fowcube.ui.home.HomeViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 
-class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener,
-    OnListFragmentInteractionListener, NewCollectionFragment.NoticeDialogListener {
+class MainActivity : AppCompatActivity(), NewCollectionFragment.NoticeDialogListener {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
 
@@ -43,7 +43,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         // menu should be considered as top level destinations.
         appBarConfiguration = AppBarConfiguration(
             setOf(
-                R.id.nav_home, R.id.nav_collections
+                R.id.nav_home, R.id.nav_cards
             ), drawerLayout
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
@@ -61,16 +61,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
 
-    override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        when(item.itemId) {
-            R.id.nav_home -> {
-                // TODO: Load Home Fragment.
-            }
-            R.id.nav_collections -> {
-                // TODO: Load Collection Fragment.
-            }
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        super.onOptionsItemSelected(item)
+        when(item.itemId){
+            R.id.collections_clear -> collectionClear()
         }
-        drawer_layout.closeDrawer(GravityCompat.START)
         return true
     }
 
@@ -82,16 +77,29 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
     }
 
-    override fun onListFragmentInteraction(item: it.danieletentoni.fowcube.ui.collectioncards.dummy.DummyContent.DummyItem) {
-        Toast.makeText(baseContext, R.string.app_name, Toast.LENGTH_LONG).show()
+    /**
+     * The positive result.
+     */
+    override fun onDialogPositiveClick(collectionName: String) {
+        val homeViewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
+        val newCollectionModel = CollectionModel()
+        newCollectionModel.name = collectionName
+        homeViewModel.insert(newCollectionModel).invokeOnCompletion {
+            Log.w("NEW_COLLECTION", "A new collection was correctly added.")
+        }
     }
 
-    override fun onDialogPositiveClick(dialog: DialogFragment) {
-        CollectionViewModel().insert()
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    /**
+     * The negative result.
+     */
+    override fun onDialogNegativeClick() {
+        Log.w("NEW_COLLECTION", "A new collection was not added.")
     }
 
-    override fun onDialogNegativeClick(dialog: DialogFragment) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    private fun collectionClear() {
+        val homeViewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
+        homeViewModel.clearCollections().invokeOnCompletion {
+            Log.w("NEW_COLLECTION", "All collection was cleared.")
+        }
     }
 }

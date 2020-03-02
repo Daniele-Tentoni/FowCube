@@ -2,22 +2,22 @@ package it.danieletentoni.fowcube.ui.collections
 
 import android.app.Dialog
 import android.content.Context
-import android.content.DialogInterface
 import android.os.Bundle
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
 import it.danieletentoni.fowcube.R
+import kotlinx.android.synthetic.main.fragment_new_collection.view.*
 
 class NewCollectionFragment: DialogFragment() {
     // Use this instance of the interface to deliver action events
-    internal lateinit var listener: NoticeDialogListener
+    private lateinit var listener: NoticeDialogListener
 
     /* The activity that creates an instance of this dialog fragment must
      * implement this interface in order to receive event callbacks.
      * Each method passes the DialogFragment in case the host needs to query it. */
     interface NoticeDialogListener {
-        fun onDialogPositiveClick(dialog: DialogFragment)
-        fun onDialogNegativeClick(dialog: DialogFragment)
+        fun onDialogPositiveClick(collectionName: String)
+        fun onDialogNegativeClick()
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -25,15 +25,16 @@ class NewCollectionFragment: DialogFragment() {
             // Use the Builder class for convenient dialog construction
             val builder = AlertDialog.Builder(it)
             val inflater = requireActivity().layoutInflater
+            val view = inflater.inflate(R.layout.fragment_new_collection, null)
             builder.setMessage(R.string.collection)
-                .setView(inflater.inflate(R.layout.fragment_new_collection, null))
-                .setPositiveButton(R.string.create, DialogInterface.OnClickListener { dialog, id ->
+                .setView(view)
+                .setPositiveButton(R.string.create) { _, _ ->
                     // Add collection.
-                    listener.onDialogPositiveClick(this)
-                }).setNegativeButton(R.string.dismiss, DialogInterface.OnClickListener { dialog, id ->
+                    listener.onDialogPositiveClick(view.collection_name.text.toString())
+                }.setNegativeButton(R.string.dismiss) { _, _ ->
                     // Don't add to collections.
-                    listener.onDialogNegativeClick(this)
-                })
+                    listener.onDialogNegativeClick()
+                }
             // Create the AlertDialog object and return it
             builder.create()
         } ?: throw IllegalStateException("Activity cannot be null")
